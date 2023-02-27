@@ -1,34 +1,59 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Moein.TimeRecorder
 {
-    public abstract class RecordModel<T, DataModel>
+    public abstract class RecordModel<Component, DataModel>
     {
-        protected T target;
-
+        protected Component component;
         public string fileName;
         public int tapeIndex;
-        List<DataModel> tape = new List<DataModel>();
+        protected List<DataModel> tape = new List<DataModel>();
 
-        public abstract DataModel CaptureData();
-        public void SetTarget(T target) => this.target = target;
+        public void SetTargetComponent(Component component) => this.component = component;
+        public abstract void CaptureData();
+        public abstract void SetData(DataModel dataModel);
+
+        public int SamplingCount => tape.Count;
+
+        public void Save(string directory)
+        {
+            TimeRecorderFileHandler.Save(directory, fileName, tape);
+        }
+
+        public void Load(string directory)
+        {
+            tape = TimeRecorderFileHandler.Load<DataModel>(directory, fileName);
+        }
     }
 
-    public class TrnasformRecordModel : RecordModel<Transform, TransformModel>
+    public class TransformRecordModel : RecordModel<Transform, TransformModel>
     {
-        public override TransformModel CaptureData()
+        public override void CaptureData()
         {
-            return new TransformModel(target.localPosition, target.localEulerAngles);
+            var model = new TransformModel(component.localPosition, component.localEulerAngles);
+            tape.Add(model);
+        }
+
+        public override void SetData(TransformModel dataModel)
+        {
+            component.localPosition = dataModel.position;
+            component.localEulerAngles = dataModel.eulerAngles;
         }
     }
 
     public class AudioRecordModel : RecordModel<AudioSource, float>
     {
-        public override float CaptureData()
+        public override void CaptureData()
         {
-            return target.pitch;
+            tape.Add(component.pitch);
+        }
+
+        public override void SetData(float dataModel)
+        {
+            component.pitch = dataModel;
         }
     }
 
