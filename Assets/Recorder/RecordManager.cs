@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Moein.TimeRecorder
 {
@@ -16,34 +15,31 @@ namespace Moein.TimeRecorder
 
     public enum HandlingType
     {
-        Delay,
-        Manual,
-        ManualAndDelay
+        Manual
     }
 
     public class RecordManager : MonoBehaviour
     {
         [Header("Config")]
-        [SerializeField] private string takeName;
-        [SerializeField, Tooltip("Increase value after record")] private int takeNumber;
-        [SerializeField] private HandlingType handlingType;
         [SerializeField] private RecordState state;
+
+        [SerializeField] private string takeName = "TakeName";
+        [SerializeField, Min(1), Tooltip("Increase value after record")] private int takeNumber = 1;
+        [SerializeField] private HandlingType handlingType;
         [SerializeField] private float capturingInterval = .5f;
-        [SerializeField] private float startRecordTime;
-        [SerializeField] private float endRecordTime;
-        public float delay;
+        [SerializeField] private float delay;
 
-        [Header("Objects"), Space(10)]
+        [Header("Objects"), Space(5)]
+        [SerializeField] private List<Transform> transforms;
         private List<TransformRecordModel> transformRecordModels;
-        private List<Transform> transforms;
 
-        [Header("Control Key"), Space(10)]
-        public KeyCode recordKey = KeyCode.R;
-        public KeyCode pauseKey = KeyCode.E;
+        [Header("Control Key"), Space(5)]
+        public KeyCode startRecordKey = KeyCode.R;
+        public KeyCode stopRecordKey = KeyCode.E;
+
+        private float startRecordTime;
 
         public string DirectoryName => $"{takeName}_{takeNumber}";
-
-        public float RecordDuration => endRecordTime - startRecordTime;
 
         #region BeforeRecording
 
@@ -62,13 +58,14 @@ namespace Moein.TimeRecorder
             if (transforms.Count > 0)
             {
                 // create recordModels from Objects
-                transformRecordModels = new List<TransformRecordModel>(transforms.Count);
+                transformRecordModels = new List<TransformRecordModel>();
                 for (int i = 0; i < transforms.Count; i++)
                 {
-                    transformRecordModels[i] = new TransformRecordModel();
-                    transformRecordModels[i].SetTargetComponent(transforms[i]);
-                    transformRecordModels[i].fileName = GetFileName(transforms[i]);
-                    transforms[i].name = $"{transformRecordModels[i].fileName} ({transforms[i].name})";
+                    var model = new TransformRecordModel();
+                    model.SetTargetComponent(transforms[i]);
+                    model.fileName = GetFileName(transforms[i]);
+                    transforms[i].name = $"{model.fileName} ({transforms[i].name})";
+                    transformRecordModels.Add(model);
                 }
             }
         }
@@ -76,7 +73,7 @@ namespace Moein.TimeRecorder
         private string GetFileName(Transform t)
         {
             if (t == transform) return "0";
-            return GetFileName(transform.parent) + "_" + transform.GetSiblingIndex();
+            return GetFileName(t.parent) + "_" + t.GetSiblingIndex();
         }
 
         private void SetRecordConfig()
@@ -88,10 +85,37 @@ namespace Moein.TimeRecorder
 
         #region Recording
 
+        public void StartRecording()
+        {
+            state = RecordState.Recording;
+            startRecordTime = Time.time;
+        }
+
+        public void StopRecording()
+        {
+            state = RecordState.Stop;
+            Save();
+            takeNumber++;
+
+            Debug.Log($"Record Finished. Record Time{Time.time - startRecordTime}");
+            startRecordTime = 0;
+            // load tape for ready to play
+            // LoadFile();
+        }
+
         // timers
         private float capturingTimer = 0;
         private float recordingTimer = 0;
         private float delayTimer = 0;
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(startRecordKey))
+                StartRecording();
+            else if (Input.GetKeyDown(stopRecordKey))
+                StopRecording();
+
+        }
 
         // capturing data per inteval 
         private void FixedUpdate()
@@ -111,25 +135,6 @@ namespace Moein.TimeRecorder
             }
         }
 
-        public void SetStata(RecordState newState)
-        {
-            state = newState;
-        }
-
-        public void StartRecording()
-        {
-            SetStata(RecordState.Recording);
-        }
-
-        public void StopRecording()
-        {
-            takeNumber++;
-            SetStata(RecordState.Stop);
-            Save();
-
-            // load tape for ready to play
-            // LoadFile();
-        }
 
         #endregion
 
