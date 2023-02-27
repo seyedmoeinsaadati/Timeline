@@ -4,7 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Moein.TimeRecorder
+namespace Moein.Recorder
 {
     public class TimeRecorderFileHandler : MonoBehaviour
     {

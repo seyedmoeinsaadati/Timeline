@@ -1,4 +1,4 @@
-﻿namespace Moein.TimeRecorder
+﻿namespace Moein.Recorder
 {
     public static class Constants
     {

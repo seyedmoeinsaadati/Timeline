@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace Moein.TimeRecorder
+namespace Moein.Recorder
 {
     public abstract class RecordModel<Component, DataModel>
     {

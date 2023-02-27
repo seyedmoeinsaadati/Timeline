@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Moein.TimeRecorder
+namespace Moein.Recorder
 {
     public enum RecordState
     {
