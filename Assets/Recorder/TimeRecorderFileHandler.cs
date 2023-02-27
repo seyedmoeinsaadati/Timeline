@@ -49,7 +49,7 @@ namespace Moein.TimeRecorder
 
                 return (List<T>) formatter.Deserialize(s);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Debug.Log($"File Loaded Failed. {path}");
                 return new List<T>();
