@@ -25,13 +25,13 @@ namespace Moein.TimeRecorder
     {
         public SerializableVector3 position;
         public SerializableVector3 eulerAngles;
-        public SerializableVector3 scale;
+        // public SerializableVector3 scale;
 
-        public TransformModel(Vector3 position, Vector3 eulerAngles, Vector3 scale)
+        public TransformModel(Vector3 position, Vector3 eulerAngles/*, Vector3 scale*/)
         {
             this.position = new SerializableVector3(position);
             this.eulerAngles = new SerializableVector3(eulerAngles);
-            this.scale = new SerializableVector3(scale);
+            // this.scale = new SerializableVector3(scale);
         }
     }
 }
