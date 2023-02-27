@@ -123,7 +123,11 @@ namespace Moein.TimeRecorder
             if (state == RecordState.Recording)
             {
                 capturingTimer += Time.fixedDeltaTime;
-                if (capturingTimer > capturingInterval) Capture();
+                if (capturingTimer > capturingInterval)
+                {
+                    Capture();
+                    capturingTimer = 0;
+                }
             }
         }
 
@@ -134,7 +138,6 @@ namespace Moein.TimeRecorder
                 transformRecordModels[i].CaptureData();
             }
         }
-
 
         #endregion
 
@@ -168,6 +171,11 @@ namespace Moein.TimeRecorder
             if (handlingType == HandlingType.Manual)
                 delay = -1;
         }
+
+        // lerping =>
+        // a: prevTapeIndex
+        // b: nextTapeIndex
+        // t: capturingTime/capturingInterval
     }
 }
 
