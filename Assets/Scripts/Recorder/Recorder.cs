@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -70,7 +69,7 @@ namespace Moein.Timeline
                 for (int i = 0; i < transforms.Count; i++)
                 {
                     var model = new TransformRecordModel();
-                    model.SetTargetComponent(transforms[i]);
+                    model.timeline.SetTargetComponent(transforms[i]);
                     model.fileName = GetFileName(transforms[i]);
                     transforms[i].name = $"{model.fileName} ({transforms[i].name})";
                     transformRecordModels.Add(model);
@@ -146,7 +145,7 @@ namespace Moein.Timeline
         {
             for (int i = 0; i < transformRecordModels.Count; i++)
             {
-                transformRecordModels[i].CaptureData();
+                transformRecordModels[i].timeline.CaptureData();
             }
 
             captureCount++;
@@ -174,7 +173,7 @@ namespace Moein.Timeline
 
         #endregion
 
-        void OnGUI()
+        private void OnGUI()
         {
             GUILayout.Space(10);
 
