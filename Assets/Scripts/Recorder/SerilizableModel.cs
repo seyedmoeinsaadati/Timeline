@@ -6,7 +6,6 @@ namespace Moein.Timeline
     public class SerializableVector3
     {
         private float x, y, z;
-
         public SerializableVector3(Vector3 v3)
         {
             x = v3.x;

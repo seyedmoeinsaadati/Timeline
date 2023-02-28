@@ -17,5 +17,9 @@ namespace Moein.Timeline
             component.pitch = snapshot;
         }
 
+        public override void LerpSnapshot(int index1, int index2, float t)
+        {
+            ApplySnapshot(Mathf.Lerp(tape[index1], tape[index2], t));
+        }
     }
 }

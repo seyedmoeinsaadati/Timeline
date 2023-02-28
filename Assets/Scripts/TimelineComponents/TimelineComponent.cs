@@ -5,8 +5,6 @@ namespace Moein.Timeline
     public abstract class TimelineComponent<TComponent, TSnapshot>
     {
         protected TComponent component;
-        protected int pointer, crntPointer;
-        public int tapeIndex;
         protected List<TSnapshot> tape;
 
         public List<TSnapshot> Tape
@@ -26,6 +24,8 @@ namespace Moein.Timeline
         public abstract void CaptureSnapshot();
 
         public abstract void ApplySnapshot(TSnapshot snapshot);
+
+        public abstract void LerpSnapshot(int index1, int index2, float t);
 
         public int SamplingCount => tape.Count;
 
