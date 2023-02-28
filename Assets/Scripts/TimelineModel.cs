@@ -13,6 +13,8 @@ public class TimelineComponent<TComponent, TSnapshot>
         set => tape = value;
     }
 
+    public void SetTargetComponent(TComponent component) => this.component = component;
+
     public virtual void CaptureData()
     {
     }
