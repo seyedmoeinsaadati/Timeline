@@ -18,11 +18,7 @@ namespace Moein.Timeline
         }
     }
 
-    public class TransformRecordModel : RecordModel<Transform, TransformSnapshot>
-    {
-    }
+    public class TransformRecordModel : RecordModel<Transform, TransformSnapshot> { }
 
-    public class AudioRecordModel : RecordModel<AudioSource, float>
-    {
-    }
+    public class AudioRecordModel : RecordModel<AudioSource, float> { }
 }

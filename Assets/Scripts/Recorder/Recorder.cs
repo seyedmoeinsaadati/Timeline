@@ -47,7 +47,6 @@ namespace Moein.Timeline
 
         public int CaptureCount => captureCount;
 
-
         #region BeforeRecording
 
         private void Start()
@@ -91,7 +90,6 @@ namespace Moein.Timeline
         #endregion
 
         #region Recording
-
         public void StartRecording()
         {
             state = RecordState.Recording;
@@ -145,7 +143,7 @@ namespace Moein.Timeline
         {
             for (int i = 0; i < transformRecordModels.Count; i++)
             {
-                transformRecordModels[i].timeline.CaptureData();
+                transformRecordModels[i].timeline.CaptureSnapshot();
             }
 
             captureCount++;

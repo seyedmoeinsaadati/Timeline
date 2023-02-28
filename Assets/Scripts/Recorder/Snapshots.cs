@@ -7,7 +7,6 @@ namespace Moein.Timeline
     {
         public SerializableVector3 position;
         public SerializableQuaternion rotation;
-
         // public SerializableVector3 scale;
 
         public TransformSnapshot(Vector3 position, Quaternion rotation /*, Vector3 scale*/)
@@ -17,7 +16,7 @@ namespace Moein.Timeline
             // this.scale = new SerializableVector3(scale);
         }
 
-        public TransformSnapshot Lerp(TransformSnapshot a, TransformSnapshot b, float t)
+        public static TransformSnapshot Lerp(TransformSnapshot a, TransformSnapshot b, float t)
         {
             var pos = Vector3.Lerp(a.position, b.position, t);
             var rot = Quaternion.Slerp(a.rotation, b.rotation, t);
