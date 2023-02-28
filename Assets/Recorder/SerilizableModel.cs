@@ -21,17 +21,22 @@ namespace Moein.Timeline
     }
 
     [System.Serializable]
-    public class TransformModel
+    public class SerializableQuaternion
     {
-        public SerializableVector3 position;
-        public SerializableVector3 eulerAngles;
-        // public SerializableVector3 scale;
+        private float x, y, z, w;
 
-        public TransformModel(Vector3 position, Vector3 eulerAngles/*, Vector3 scale*/)
+        public SerializableQuaternion(Quaternion quaternion)
         {
-            this.position = new SerializableVector3(position);
-            this.eulerAngles = new SerializableVector3(eulerAngles);
-            // this.scale = new SerializableVector3(scale);
+            x = quaternion.x;
+            y = quaternion.y;
+            z = quaternion.z;
+            w = quaternion.w;
+        }
+
+        public static implicit operator Quaternion(SerializableQuaternion value)
+        {
+            return new Quaternion(value.x, value.y, value.z, value.w);
         }
     }
+    
 }

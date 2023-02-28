@@ -27,18 +27,18 @@ namespace Moein.Timeline
         }
     }
 
-    public class TransformRecordModel : RecordModel<Transform, TransformModel>
+    public class TransformRecordModel : RecordModel<Transform, TransformSnapshot>
     {
         public override void CaptureData()
         {
-            var model = new TransformModel(component.localPosition, component.localEulerAngles);
+            var model = new TransformSnapshot(component.localPosition, component.localRotation);
             tape.Add(model);
         }
 
-        public override void SetData(TransformModel dataModel)
+        public override void SetData(TransformSnapshot dataModel)
         {
             component.localPosition = dataModel.position;
-            component.localEulerAngles = dataModel.eulerAngles;
+            component.localRotation = dataModel.rotation;
         }
     }
 
