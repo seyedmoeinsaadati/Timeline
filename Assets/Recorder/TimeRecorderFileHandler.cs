@@ -4,17 +4,22 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Moein.Recorder
+namespace Moein.Timeline
 {
     public class TimeRecorderFileHandler : MonoBehaviour
     {
+        private static TimeRecorderFileHandler instance;
+        public static string ASSETS_PATH = "Assets/Resources/";
+        public static string MAIN_DIRECTORY = "TimeRecordFiles/";
+        public static string RECORD_FILE_EXTENSION = ".tr";
+
         /// <summary>
         /// save list<T> as a text file in resources folder
         /// </summary>
         public static void Save<T>(string subDirectory, string filename, List<T> list)
         {
-            string directory = Constants.ASSETS_PATH + Constants.MAIN_DIRECTORY + subDirectory + "/";
-            filename += Constants.RECORD_FILE_EXTENSION;
+            string directory = ASSETS_PATH + MAIN_DIRECTORY + subDirectory + "/";
+            filename += RECORD_FILE_EXTENSION;
             if (Directory.Exists(directory) == false)
                 Directory.CreateDirectory(directory);
 
@@ -38,7 +43,7 @@ namespace Moein.Recorder
         /// </summary>
         public static List<T> Load<T>(string subDirectory, string fileName)
         {
-            string path = Constants.MAIN_DIRECTORY + subDirectory + "/" + fileName + Constants.RECORD_FILE_EXTENSION;
+            string path = MAIN_DIRECTORY + subDirectory + "/" + fileName + RECORD_FILE_EXTENSION;
             try
             {
                 TextAsset binaryFile = Resources.Load<TextAsset>(path);
@@ -59,8 +64,8 @@ namespace Moein.Recorder
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void OnRuntimeInitialize()
         {
-            var go = new GameObject(nameof(TimeRecorderFileHandler)).AddComponent<TimeRecorderFileHandler>().gameObject;
-            DontDestroyOnLoad(go);
+            instance = new GameObject(nameof(TimeRecorderFileHandler)).AddComponent<TimeRecorderFileHandler>();
+            DontDestroyOnLoad(instance.gameObject);
         }
     }
 }

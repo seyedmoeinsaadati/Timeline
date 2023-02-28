@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Moein.Recorder
+namespace Moein.Timeline
 {
     public abstract class RecordModel<Component, DataModel>
     {
@@ -54,5 +54,4 @@ namespace Moein.Recorder
             component.pitch = dataModel;
         }
     }
-
 }

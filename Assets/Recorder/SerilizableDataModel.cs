@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Moein.Recorder
+namespace Moein.Timeline
 {
     [System.Serializable]
     public class SerializableVector3

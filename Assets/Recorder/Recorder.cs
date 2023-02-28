@@ -1,8 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-namespace Moein.Recorder
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+namespace Moein.Timeline
 {
     public enum RecordState
     {
@@ -18,23 +22,25 @@ namespace Moein.Recorder
         Manual
     }
 
-    public class RecordManager : MonoBehaviour
+    public class Recorder : MonoBehaviour
     {
-        [Header("Config")]
-        [SerializeField] private RecordState state;
+        [Header("Config")] [SerializeField] private RecordState state;
 
         [SerializeField] private string takeName = "TakeName";
-        [SerializeField, Min(1), Tooltip("Increase value after record")] private int takeNumber = 1;
+
+        [SerializeField, Min(1), Tooltip("Increase value after record")]
+        private int takeNumber = 1;
+
         [SerializeField] private HandlingType handlingType;
         [SerializeField] private float capturingInterval = .5f;
         [SerializeField] private float delay;
 
-        [Header("Objects"), Space(5)]
-        [SerializeField] private List<Transform> transforms;
+        [Header("Objects"), Space(5)] [SerializeField]
+        private List<Transform> transforms;
+
         private List<TransformRecordModel> transformRecordModels;
 
-        [Header("Control Key"), Space(5)]
-        public KeyCode startRecordKey = KeyCode.R;
+        [Header("Control Key"), Space(5)] public KeyCode startRecordKey = KeyCode.R;
         public KeyCode stopRecordKey = KeyCode.E;
 
         private float startRecordTime;
@@ -114,7 +120,6 @@ namespace Moein.Recorder
                 StartRecording();
             else if (Input.GetKeyDown(stopRecordKey))
                 StopRecording();
-
         }
 
         // capturing data per inteval 
@@ -172,13 +177,25 @@ namespace Moein.Recorder
                 delay = -1;
         }
 
-        // lerping =>
+        // lerp =>
         // a: prevTapeIndex
         // b: nextTapeIndex
         // t: capturingTime/capturingInterval
     }
-}
 
+#if UNITY_EDITOR
+
+    // [CustomEditor(typeof(Recorder))]
+    // public class RecorderEditor : Editor
+    // {
+    //     public override void OnInspectorGUI()
+    //     {
+    //         base.OnInspectorGUI();
+    //     }
+    // }
+
+#endif
+}
 
 
 //    case RecordState.ForwardPlaying:
