@@ -1,41 +1,71 @@
 ﻿using Moein.Timeline;
+using System;
 using UnityEngine;
 
 public class Timeline : MonoBehaviour
 {
-    protected TimeState timeState = TimeState.Forward;
     public StoreType storeType = StoreType.NoMemory;
-    public float timeScale = 1;
 
-    private TimelineComponent<Transform, TransformSnapshot> transformTimeline;
+    // timeline components
+    private TransformComponent transformTimeline;
+
+    private int pointer, currentPointer;
+    private int headIndex;
+
+    private Timeline[] children;
 
     private void Start()
     {
-        transformTimeline = new TimelineComponent<Transform, TransformSnapshot>(transform);
+        pointer = currentPointer = headIndex = 0;
+        InitComponents();
+        children = GetComponentsInChildren<Timeline>();
     }
 
-    protected void Rewind()
+    private void InitComponents()
     {
+        transformTimeline = new TransformComponent(transform);
     }
 
-    protected void Record()
+    public void Forward(float t)
     {
+        // lerping from prevIndex, currentIndex
+        if (t >= 1)
+        {
+            currentPointer++;
+        }
+
+        if (currentPointer == headIndex)
+        {
+            // transformTimeline.LerpSnapshot(currentPointer, currentPointer, t);
+        }
+        else
+        {
+            transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, t);
+        }
     }
 
-    public void Pause()
+    public void Backward(float t)
     {
+        // lerping from currentIndex, 
+        if (t >= 1)
+        {
+            currentPointer--;
+        }
+
+        if (currentPointer == 0)
+        {
+            transformTimeline.LerpSnapshot(currentPointer, currentPointer, t);
+        }
+        else
+        {
+            transformTimeline.LerpSnapshot(currentPointer, currentPointer - 1, t);
+        }
     }
 
-    public void StartRewind()
+    public void Record()
     {
-    }
-
-    public void StopRewind()
-    {
-    }
-
-    public void ChangeTimeState(TimeState newTimeState)
-    {
-        timeState = newTimeState;
+        if (currentPointer != headIndex) return;
+        transformTimeline.CaptureSnapshot();
+        headIndex++;
     }
 }
