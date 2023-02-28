@@ -30,11 +30,15 @@ namespace Moein.Timeline
                 BinaryFormatter bf = new BinaryFormatter();
                 bf.Serialize(fs, list);
                 fs.Close();
+#if UNITY_EDITOR
                 Debug.Log($"File Saved Successfully. {path}");
+#endif
             }
             catch (Exception)
             {
+#if UNITY_EDITOR
                 Debug.LogError($"File Saved Failed. {path}");
+#endif
             }
         }
 
@@ -50,13 +54,17 @@ namespace Moein.Timeline
                 Stream s = new MemoryStream(binaryFile.bytes);
                 BinaryFormatter formatter = new BinaryFormatter();
 
+#if UNITY_EDITOR
                 Debug.Log($"File Loaded Successfully. {path}");
+#endif
 
                 return (List<T>) formatter.Deserialize(s);
             }
             catch (Exception)
             {
+#if UNITY_EDITOR
                 Debug.Log($"File Loaded Failed. {path}");
+#endif
                 return new List<T>();
             }
         }

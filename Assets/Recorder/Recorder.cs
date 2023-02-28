@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,28 +25,29 @@ namespace Moein.Timeline
 
     public class Recorder : MonoBehaviour
     {
-        [Header("Config")] [SerializeField] private RecordState state;
+        [HideInInspector] public RecordState state;
 
-        [SerializeField] private string takeName = "TakeName";
+        [Header("Config")] [SerializeField] private string takeName = "TakeName";
 
         [SerializeField, Min(1), Tooltip("Increase value after record")]
         private int takeNumber = 1;
 
         [SerializeField] private HandlingType handlingType;
-        [SerializeField] private float capturingInterval = .5f;
-        [SerializeField] private float delay;
-
-        [Header("Objects"), Space(5)] [SerializeField]
-        private List<Transform> transforms;
-
-        private List<TransformRecordModel> transformRecordModels;
+        [SerializeField] private float captureInterval = .5f;
 
         [Header("Control Key"), Space(5)] public KeyCode startRecordKey = KeyCode.R;
         public KeyCode stopRecordKey = KeyCode.E;
 
+        private List<Transform> transforms;
+        private List<TransformRecordModel> transformRecordModels;
         private float startRecordTime;
+        private int captureCount;
 
         public string DirectoryName => $"{takeName}_{takeNumber}";
+        public float RecordingTime => Time.time - startRecordTime;
+
+        public int CaptureCount => captureCount;
+
 
         #region BeforeRecording
 
@@ -100,13 +102,17 @@ namespace Moein.Timeline
         public void StopRecording()
         {
             state = RecordState.Stop;
+
             Save();
             takeNumber++;
 
-            Debug.Log($"Record Finished. Record Time{Time.time - startRecordTime}");
+#if UNITY_EDITOR
+            Debug.Log($"Record Finished. Record Time: {RecordingTime}");
             startRecordTime = 0;
+#endif
+
             // load tape for ready to play
-            // LoadFile();
+            Load();
         }
 
         // timers
@@ -128,7 +134,7 @@ namespace Moein.Timeline
             if (state == RecordState.Recording)
             {
                 capturingTimer += Time.fixedDeltaTime;
-                if (capturingTimer > capturingInterval)
+                if (capturingTimer > captureInterval)
                 {
                     Capture();
                     capturingTimer = 0;
@@ -142,6 +148,8 @@ namespace Moein.Timeline
             {
                 transformRecordModels[i].CaptureData();
             }
+
+            captureCount++;
         }
 
         #endregion
@@ -168,13 +176,15 @@ namespace Moein.Timeline
 
         void OnGUI()
         {
-            GUILayout.Label(state.ToString());
-        }
+            GUILayout.Space(10);
 
-        private void OnValidate()
-        {
-            if (handlingType == HandlingType.Manual)
-                delay = -1;
+            GUILayout.Label($"Recording State: {state}");
+
+            if (state == RecordState.Recording)
+            {
+                GUILayout.Label($"Recording Time: {RecordingTime}");
+                GUILayout.Label($"Capturing Count: {CaptureCount}");
+            }
         }
 
         // lerp =>
@@ -185,14 +195,21 @@ namespace Moein.Timeline
 
 #if UNITY_EDITOR
 
-    // [CustomEditor(typeof(Recorder))]
-    // public class RecorderEditor : Editor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         base.OnInspectorGUI();
-    //     }
-    // }
+    [CustomEditor(typeof(Recorder))]
+    public class RecorderEditor : Editor
+    {
+        private Recorder recorder;
+
+        private void OnEnable()
+        {
+            recorder = target as Recorder;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+        }
+    }
 
 #endif
 }
