@@ -3,50 +3,38 @@ using UnityEngine;
 
 public class TimelineController : MonoBehaviour
 {
-    [SerializeField] private float captureInterval = .5f;
     private float timeScale = 1;
-    private List<Timeline> timelines;
-
-    private int captureCount;
-    private float timer;
-
-    public int CaptureCount => captureCount;
+    [SerializeField] private List<Timeline> timelines;
 
     private void FixedUpdate()
     {
-        timer += Time.fixedDeltaTime * timeScale;
-
         if (timeScale > 0)
         {
-            // forward and recording
-            if (timer > captureInterval)
-            {
-                Capture();
-                timer = 0;
-            }
+            ProgressTimelines();
         }
-        else if (timeScale == 0)
+        else if (timeScale < 0)
         {
-            // pause
-            // no record snapshots
-        }
-        else
-        {
-            // rewinding
-            timelines[0].Backward(2f);
+            RewindTimelines();
         }
     }
 
-    private void Capture()
+    private void RewindTimelines()
     {
         for (int i = 0; i < timelines.Count; i++)
         {
-            timelines[i].Record();
+            timelines[i].Rewind();
         }
-        captureCount++;
     }
 
-    public void RegisterTimeline(Timeline timeline)
+    private void ProgressTimelines()
+    {
+        for (int i = 0; i < timelines.Count; i++)
+        {
+            timelines[i].Progress();
+        }
+    }
+
+    public void Register(Timeline timeline)
     {
         if (timelines.Contains(timeline) == false)
         {
@@ -54,12 +42,11 @@ public class TimelineController : MonoBehaviour
         }
     }
 
-    public void RemoveTimeline(Timeline timeline)
+    public void Remove(Timeline timeline)
     {
         if (timelines.Contains(timeline))
         {
             timelines.Remove(timeline);
         }
     }
-
 }

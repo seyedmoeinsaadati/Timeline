@@ -6,7 +6,7 @@ namespace Moein.Timeline
     {
         protected TComponent component;
         protected List<TSnapshot> tape;
-
+        
         public List<TSnapshot> Tape
         {
             get => tape;
@@ -28,6 +28,5 @@ namespace Moein.Timeline
         public abstract void LerpSnapshot(int index1, int index2, float t);
 
         public int SamplingCount => tape.Count;
-
     }
 }
