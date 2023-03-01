@@ -12,8 +12,7 @@ public class Timeline : MonoBehaviour
     private Timeline[] children;
 
     private float lerpT;
-    private float lerpFrom;
-    private float lerpTo;
+    private float recordingTime;
 
     public bool IsTapeOnHead => headIndex == currentPointer;
 
@@ -32,28 +31,36 @@ public class Timeline : MonoBehaviour
         }
         else
         {
+            // calculate tape pointer based on recordingTime
+            // calculate lerpT base on recordingTime
+
             // skip recording until pointer is on head
             // Forward();
+
+            // lerp from prevIndex, currentIndex
+            if (lerpT >= 1)
+            {
+                currentPointer++;
+            }
+
+            if (currentPointer == headIndex)
+            {
+                // transformTimeline.LerpSnapshot(currentPointer, currentPointer, t);
+            }
+            else
+            {
+                transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT);
+            }
         }
 
-        // lerp from prevIndex, currentIndex
-        if (lerpT >= 1)
-        {
-            currentPointer++;
-        }
-
-        if (currentPointer == headIndex)
-        {
-            // transformTimeline.LerpSnapshot(currentPointer, currentPointer, t);
-        }
-        else
-        {
-            transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT);
-        }
+        recordingTime += Time.fixedTime; // * timeScale;
     }
 
     public void Rewind()
     {
+        // calculate tape pointer based on recordingTime
+        // calculate lerpT base on recordingTime
+
         if (lerpT >= 1)
         {
             currentPointer--;
@@ -67,6 +74,8 @@ public class Timeline : MonoBehaviour
         {
             transformTimeline.LerpSnapshot(currentPointer, currentPointer - 1, lerpT);
         }
+
+        recordingTime -= Time.fixedTime; // * timeScale;
     }
 
     private float capturingTimer = 0;
@@ -78,6 +87,7 @@ public class Timeline : MonoBehaviour
         if (capturingTimer > captureInterval)
         {
             CaptureSnapshots();
+            capturingTimer = 0;
         }
     }
 
