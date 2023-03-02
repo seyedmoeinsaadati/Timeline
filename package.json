@@ -1,0 +1,26 @@
+{
+  "name": "com.moein.unity.timeline",
+  "displayName": "Timeline",
+  "version": "1.0.0",
+  "unity": "2019.1",
+  "author": {
+    "name": "Seyed Moein Saadati",
+    "email": "saadatimoin@gmail.com",
+    "url": "https://seyedmoeinsaadati.github.io/"
+  },
+  "description": "",
+  "keywords": [
+    "Moein",
+    "Recorder",
+    "Record",
+    "Saadati",
+    "Seyed Moein",
+    "M100ETI"
+  ],
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seyedmoeinsaadati/timeline.git"
+  },
+  "samples": []
+}
