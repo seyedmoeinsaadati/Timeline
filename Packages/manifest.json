@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.moein.unity": "https://github.com/seyedmoeinsaadati/com.moein.unity.git",
     "com.unity.collab-proxy": "1.14.18",
     "com.unity.ide.rider": "1.2.1",
     "com.unity.ide.visualstudio": "2.0.15",

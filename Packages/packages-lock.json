@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.moein.unity": {
-      "version": "https://github.com/seyedmoeinsaadati/com.moein.unity.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "5b66af3ea34ebdb0b0d792e5293e12aca118dea9"
-    },
     "com.unity.collab-proxy": {
       "version": "1.14.18",
       "depth": 0,
