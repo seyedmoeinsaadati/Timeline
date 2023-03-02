@@ -1,95 +1,127 @@
 ﻿using Moein.TimeSystem;
+using UnityEditor;
 using UnityEngine;
 
-public class Timeline : MonoBehaviour
+
+namespace Moein.TimeSystem
 {
-    [SerializeField] public float captureInterval = .5f;
-    [SerializeField] private StoreType storeType = StoreType.NoMemory;
-    private Timeline[] children;
-
-    private float lerpT;
-    private float time;
-    private int currentPointer;
-    private int headIndex;
-
-    private void Start()
+    public class Timeline : MonoBehaviour
     {
-        currentPointer = headIndex = 0;
-        InitComponents();
-        children = GetComponentsInChildren<Timeline>();
-    }
+        [SerializeField] public float captureInterval = .5f;
 
-    public void Progress(float timeScale)
-    {
-        currentPointer = (int) (time / captureInterval);
+        [SerializeField] private StoreType storeType = StoreType.NoMemory;
+        // private Timeline[] children;
 
-        if (storeType == StoreType.NoMemory || currentPointer == headIndex)
+        [HideInInspector] public float time;
+        [HideInInspector] public int headIndex = -1;
+        private float lerpT;
+        private int currentPointer;
+
+        private void Start()
         {
-            Capture();
+            currentPointer = headIndex = -1;
+            InitComponents();
+            // children = GetComponentsInChildren<Timeline>();
         }
-        else
+
+        public void Progress(float timeScale)
         {
-            lerpT = timeScale == 0 ? lerpT : time - (currentPointer * captureInterval);
+            time += Time.fixedDeltaTime * timeScale;
+            time = Mathf.Max(0, time);
+
+            // currentPointer = (int) (time / captureInterval);
+            Capture();
+
+            // if (storeType == StoreType.NoMemory)
+            // {
+            //     Capture();
+            // }
+            // else
+            // {
+            //     lerpT = timeScale == 0 ? lerpT : time - (currentPointer * captureInterval);
+            //     transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1,
+            //         lerpT));
+            // }
+            //
+        }
+
+        public void Rewind(float timeScale)
+        {
+            time += Time.fixedDeltaTime * timeScale;
+            time = Mathf.Max(0, time);
+            currentPointer = (int) (time / captureInterval);
+            lerpT = (time - currentPointer * captureInterval) / captureInterval;
+
+            //Debug.Log($"Current Pointer: {currentPointer}");
+
+            if (currentPointer == headIndex + 1)
+            {
+                transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer - 1, currentPointer - 1,
+                    lerpT));
+                return;
+            } 
+
             transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT));
         }
 
-        time += Time.fixedDeltaTime * timeScale;
-        time = Mathf.Max(0.001f, time);
-    }
 
-    public void Rewind(float timeScale)
-    {
-        // calculate tape pointer based on recordingTime
-        // calculate lerpT base on recordingTime
-        currentPointer = (int) (time / captureInterval);
+        #region Capturing
 
-        if (currentPointer == headIndex)
+        private float capturingTimer;
+
+        private void Capture()
         {
-            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer, currentPointer, lerpT));
-            return;
+            capturingTimer += Time.fixedDeltaTime;
+            if (capturingTimer >= captureInterval)
+            {
+                CaptureSnapshots();
+                capturingTimer = 0;
+            }
         }
 
-        lerpT = time - (currentPointer * captureInterval);
-        transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT));
+        private void CaptureSnapshots()
+        {
+            // if (currentPointer != headIndex) return;
+            transformTimeline.CaptureSnapshot();
+            headIndex++;
+        }
+
+        #endregion
 
 
-        time += Time.fixedDeltaTime * timeScale;
-        time = Mathf.Max(0.001f, time);
+        #region TimelineComponents
+
+        private TransformComponent transformTimeline;
+
+        private void InitComponents()
+        {
+            transformTimeline = new TransformComponent(transform);
+        }
+
+        #endregion
     }
 
+#if UNITY_EDITOR
 
-    #region Capturing
-
-    private float capturingTimer;
-
-    private void Capture()
+    [CustomEditor(typeof(Timeline))]
+    public class TimelineEditor : Editor
     {
-        capturingTimer += Time.fixedDeltaTime;
-        if (capturingTimer > captureInterval)
+        private Timeline timeline;
+
+        private void OnEnable()
         {
-            CaptureSnapshots();
-            capturingTimer = 0;
+            timeline = target as Timeline;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            GUILayout.Space(5);
+            GUILayout.Label($"Time: {timeline.time}");
+            GUILayout.Label($"Head Index: {timeline.headIndex}");
         }
     }
 
-    private void CaptureSnapshots()
-    {
-        if (currentPointer != headIndex) return;
-        transformTimeline.CaptureSnapshot();
-        headIndex++;
-    }
-
-    #endregion
-
-
-    #region TimelineComponents
-
-    private TransformComponent transformTimeline;
-
-    private void InitComponents()
-    {
-        transformTimeline = new TransformComponent(transform);
-    }
-
-    #endregion
+#endif
 }
