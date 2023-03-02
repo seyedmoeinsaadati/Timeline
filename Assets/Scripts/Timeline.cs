@@ -7,9 +7,8 @@ namespace Moein.TimeSystem
 {
     public class Timeline : MonoBehaviour
     {
+        [SerializeField] public bool withMemory;
         [SerializeField] public float captureInterval = .5f;
-
-        [SerializeField] private StoreType storeType = StoreType.NoMemory;
         // private Timeline[] children;
 
         [HideInInspector] public float time;
@@ -17,8 +16,6 @@ namespace Moein.TimeSystem
         [HideInInspector] public int headIndex;
         private float lerpT;
         [HideInInspector] public float lastCapturingTime;
-
-        public float fixedDeltaTime;
 
         private void Start()
         {
@@ -32,11 +29,21 @@ namespace Moein.TimeSystem
             time += Time.fixedDeltaTime * timeScale;
             timePointer = (int) (time / captureInterval);
 
-            if (time >= captureInterval * (headIndex + 1))
+            if (withMemory)
             {
-                CaptureSnapshots();
-                headIndex++;
+                if (timePointer < headIndex)
+                {
+                    // forwarding
+                    lerpT = (time - timePointer * captureInterval) / captureInterval;
+                    transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(timePointer, timePointer + 1,
+                        lerpT));
+
+                    return;
+                }
             }
+
+            if (timePointer < headIndex) headIndex = timePointer;
+            Capture();
         }
 
         public void Rewind(float timeScale)
@@ -59,15 +66,14 @@ namespace Moein.TimeSystem
 
         #region Capturing
 
-        // private float capturingTimer;
-        // 
-        // private void Capture()
-        // {
-        //     CaptureSnapshots();
-        //         // capturingTimer = 0;
-        //         lastCapturingTime = time;
-        //         headIndex++;
-        // }
+        private void Capture()
+        {
+            if (time >= captureInterval * (headIndex + 1))
+            {
+                headIndex++;
+                CaptureSnapshots();
+            }
+        }
 
 
         private void CaptureSnapshots()
