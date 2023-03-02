@@ -1,52 +1,55 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class TimelineController : MonoBehaviour
+namespace Moein.TimeSystem
 {
-    private float timeScale = 1;
-    [SerializeField] private List<Timeline> timelines;
-
-    private void FixedUpdate()
+    public class TimelineController : MonoBehaviour
     {
-        if (timeScale > 0)
-        {
-            ProgressTimelines();
-        }
-        else if (timeScale < 0)
-        {
-            RewindTimelines();
-        }
-    }
+        private float timeScale = 1;
+        [SerializeField] private List<Timeline> timelines;
 
-    private void RewindTimelines()
-    {
-        for (int i = 0; i < timelines.Count; i++)
+        private void FixedUpdate()
         {
-            timelines[i].Rewind();
+            if (timeScale > 0)
+            {
+                ProgressTimelines();
+            }
+            else if (timeScale < 0)
+            {
+                RewindTimelines();
+            }
         }
-    }
 
-    private void ProgressTimelines()
-    {
-        for (int i = 0; i < timelines.Count; i++)
+        private void RewindTimelines()
         {
-            timelines[i].Progress();
+            for (int i = 0; i < timelines.Count; i++)
+            {
+                timelines[i].Rewind(timeScale);
+            }
         }
-    }
 
-    public void Register(Timeline timeline)
-    {
-        if (timelines.Contains(timeline) == false)
+        private void ProgressTimelines()
         {
-            timelines.Add(timeline);
+            for (int i = 0; i < timelines.Count; i++)
+            {
+                timelines[i].Progress(timeScale);
+            }
         }
-    }
 
-    public void Remove(Timeline timeline)
-    {
-        if (timelines.Contains(timeline))
+        public void Register(Timeline timeline)
         {
-            timelines.Remove(timeline);
+            if (timelines.Contains(timeline) == false)
+            {
+                timelines.Add(timeline);
+            }
+        }
+
+        public void Remove(Timeline timeline)
+        {
+            if (timelines.Contains(timeline))
+            {
+                timelines.Remove(timeline);
+            }
         }
     }
 }

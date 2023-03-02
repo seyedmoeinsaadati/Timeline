@@ -1,20 +1,16 @@
-﻿using Moein.Timeline;
+﻿using Moein.TimeSystem;
 using UnityEngine;
 
 public class Timeline : MonoBehaviour
 {
-    public float captureInterval = .5f;
-
-    public StoreType storeType = StoreType.NoMemory;
-    private int currentPointer;
-    private int headIndex;
-
+    [SerializeField] public float captureInterval = .5f;
+    [SerializeField] private StoreType storeType = StoreType.NoMemory;
     private Timeline[] children;
 
     private float lerpT;
-    private float recordingTime;
-
-    public bool IsTapeOnHead => headIndex == currentPointer;
+    private float time;
+    private int currentPointer;
+    private int headIndex;
 
     private void Start()
     {
@@ -23,66 +19,53 @@ public class Timeline : MonoBehaviour
         children = GetComponentsInChildren<Timeline>();
     }
 
-    public void Progress()
-    {
-        if (storeType == StoreType.NoMemory || IsTapeOnHead)
-        {
-            // Record();
-        }
-        else
-        {
-            // calculate tape pointer based on recordingTime
-            // calculate lerpT base on recordingTime
-
-            // skip recording until pointer is on head
-            // Forward();
-
-            // lerp from prevIndex, currentIndex
-            if (lerpT >= 1)
-            {
-                currentPointer++;
-            }
-
-            if (currentPointer == headIndex)
-            {
-                // transformTimeline.LerpSnapshot(currentPointer, currentPointer, t);
-            }
-            else
-            {
-                transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT);
-            }
-        }
-
-        recordingTime += Time.fixedTime; // * timeScale;
-    }
-
-    public void Rewind()
+    public void Progress(float timeScale)
     {
         // calculate tape pointer based on recordingTime
         // calculate lerpT base on recordingTime
+        currentPointer = (int) (time / captureInterval);
+        lerpT = time - (currentPointer * captureInterval);
 
-        if (lerpT >= 1)
+        if (storeType == StoreType.NoMemory || headIndex == currentPointer)
         {
-            currentPointer--;
-        }
-
-        if (currentPointer == 0)
-        {
-            transformTimeline.LerpSnapshot(currentPointer, currentPointer, lerpT);
+            Capture();
         }
         else
         {
-            transformTimeline.LerpSnapshot(currentPointer, currentPointer - 1, lerpT);
+            transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT);
         }
 
-        recordingTime -= Time.fixedTime; // * timeScale;
+        time += Time.fixedDeltaTime * timeScale;
+        time = Mathf.Max(0.001f, time);
     }
 
-    private float capturingTimer = 0;
-
-    private void Record()
+    public void Rewind(float timeScale)
     {
-        // recording
+        // calculate tape pointer based on recordingTime
+        // calculate lerpT base on recordingTime
+        currentPointer = (int) (time / captureInterval);
+
+        if (currentPointer == headIndex)
+        {
+            transformTimeline.LerpSnapshot(currentPointer, currentPointer, lerpT);
+            return;
+        }
+
+        lerpT = time - (currentPointer * captureInterval);
+        transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT);
+
+
+        time += Time.fixedDeltaTime * timeScale;
+        time = Mathf.Max(0.001f, time);
+    }
+
+
+    #region Capturing
+
+    private float capturingTimer;
+
+    private void Capture()
+    {
         capturingTimer += Time.fixedDeltaTime;
         if (capturingTimer > captureInterval)
         {
@@ -97,6 +80,9 @@ public class Timeline : MonoBehaviour
         transformTimeline.CaptureSnapshot();
         headIndex++;
     }
+
+    #endregion
+
 
     #region TimelineComponents
 
