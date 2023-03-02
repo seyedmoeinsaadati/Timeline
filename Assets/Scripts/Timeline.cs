@@ -5,9 +5,7 @@ namespace Moein.TimeSystem
 {
     public class Timeline : TimelineBase
     {
-        // private Timeline[] children;
         [SerializeField] public bool saveMemory;
-
         private int headIndex;
 
         protected override void Init()

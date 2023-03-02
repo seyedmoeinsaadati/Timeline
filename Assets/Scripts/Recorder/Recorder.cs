@@ -107,7 +107,6 @@ namespace Moein.TimeSystem
         public void StopRecording()
         {
             state = RecorderState.Stop;
-
             Save();
 
 #if UNITY_EDITOR

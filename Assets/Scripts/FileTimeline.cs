@@ -22,7 +22,6 @@ namespace Moein.TimeSystem
         public override void Progress(float timeScale)
         {
             CalculateLerping(timeScale);
-
             ApplyComponents();
         }
 

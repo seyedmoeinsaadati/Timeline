@@ -133,7 +133,6 @@ GameObject:
   - component: {fileID: 103558028}
   - component: {fileID: 103558027}
   - component: {fileID: 103558026}
-  - component: {fileID: 103558029}
   - component: {fileID: 103558030}
   m_Layer: 0
   m_Name: Cube (1)
@@ -218,22 +217,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 103558024}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &103558029
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 103558024}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &103558030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,12 +229,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3814eb2558144789b4856d883bb24cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: 
   captureInterval: 0.5
+  recordingTime: 30
   timelineTime: 0
-  pointer: 0
-  headIndex: 0
-  maxTimelineCaptureCount: 0
+  fileName: 
 --- !u!1 &186571412
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,7 +445,6 @@ GameObject:
   - component: {fileID: 548415816}
   - component: {fileID: 548415815}
   - component: {fileID: 548415814}
-  - component: {fileID: 548415817}
   - component: {fileID: 548415818}
   m_Layer: 0
   m_Name: Cube (3)
@@ -547,22 +527,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 548415812}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &548415817
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 548415812}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &548415818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -575,12 +539,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3814eb2558144789b4856d883bb24cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: 
   captureInterval: 0.5
+  recordingTime: 30
   timelineTime: 0
-  pointer: 0
-  headIndex: 0
-  maxTimelineCaptureCount: 0
+  fileName: 
 --- !u!1 &1182892467
 GameObject:
   m_ObjectHideFlags: 0
@@ -593,7 +555,6 @@ GameObject:
   - component: {fileID: 1182892471}
   - component: {fileID: 1182892470}
   - component: {fileID: 1182892469}
-  - component: {fileID: 1182892472}
   - component: {fileID: 1182892473}
   m_Layer: 0
   m_Name: Cube (2)
@@ -676,22 +637,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182892467}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &1182892472
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1182892467}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &1182892473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -704,12 +649,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3814eb2558144789b4856d883bb24cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: 
   captureInterval: 0.5
+  recordingTime: 30
   timelineTime: 0
-  pointer: 0
-  headIndex: 0
-  maxTimelineCaptureCount: 0
+  fileName: 
 --- !u!1 &1914321400
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,7 +665,6 @@ GameObject:
   - component: {fileID: 1914321404}
   - component: {fileID: 1914321403}
   - component: {fileID: 1914321402}
-  - component: {fileID: 1914321405}
   - component: {fileID: 1914321406}
   m_Layer: 0
   m_Name: Cube
@@ -805,22 +747,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1914321400}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &1914321405
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1914321400}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &1914321406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -833,12 +759,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3814eb2558144789b4856d883bb24cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: 
   captureInterval: 0.5
+  recordingTime: 30
   timelineTime: 0
-  pointer: 0
-  headIndex: 0
-  maxTimelineCaptureCount: 0
+  fileName: 
 --- !u!1 &1924100501
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,7 +858,6 @@ GameObject:
   - component: {fileID: 2076735811}
   - component: {fileID: 2076735810}
   - component: {fileID: 2076735809}
-  - component: {fileID: 2076735812}
   - component: {fileID: 2076735813}
   m_Layer: 0
   m_Name: Cube (4)
@@ -1017,22 +940,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2076735807}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &2076735812
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2076735807}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &2076735813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1045,9 +952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3814eb2558144789b4856d883bb24cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: 
   captureInterval: 0.5
+  recordingTime: 30
   timelineTime: 0
-  pointer: 0
-  headIndex: 0
-  maxTimelineCaptureCount: 0
+  fileName: 

@@ -6,6 +6,7 @@ namespace Moein.TimeSystem
     public class TransformSnapshot
     {
         public SerializableVector3 position;
+
         public SerializableQuaternion rotation;
         // public SerializableVector3 scale;
 
