@@ -108,9 +108,7 @@ namespace Moein.TimeSystem
         {
             state = RecorderState.Stop;
 
-
             Save();
-            takeNumber++;
 
 #if UNITY_EDITOR
             Debug.Log($"Record Finished. Record Time: {RecordingTime}");
@@ -118,6 +116,8 @@ namespace Moein.TimeSystem
 #endif
 
             Load();
+
+            takeNumber++;
         }
 
         private float capturingTimer = 0;
@@ -210,7 +210,7 @@ namespace Moein.TimeSystem
         {
             for (int i = 0; i < timelines.Length; i++)
             {
-                timelines[i].LoadComponents(DirectoryName, RecordingTime, captureInterval);
+                timelines[i].LoadComponents(DirectoryName, captureInterval);
             }
         }
 

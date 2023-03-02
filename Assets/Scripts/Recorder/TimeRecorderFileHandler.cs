@@ -11,7 +11,7 @@ namespace Moein.TimeSystem
         private static TimeRecorderFileHandler instance;
         public static string ASSETS_PATH = "Assets/Resources/";
         public static string MAIN_DIRECTORY = "TimeRecordFiles/";
-        public static string RECORD_FILE_EXTENSION = ".tr";
+        public static string RECORD_FILE_EXTENSION = ".bytes";
 
         /// <summary>
         /// save list<T> as a text file in resources folder
@@ -19,11 +19,8 @@ namespace Moein.TimeSystem
         public static void Save<T>(string subDirectory, string filename, List<T> list)
         {
             string directory = ASSETS_PATH + MAIN_DIRECTORY + subDirectory + "/";
-            filename += RECORD_FILE_EXTENSION;
-            if (Directory.Exists(directory) == false)
-                Directory.CreateDirectory(directory);
-
-            string path = directory + filename;
+            if (Directory.Exists(directory) == false) Directory.CreateDirectory(directory);
+            string path = directory + filename + RECORD_FILE_EXTENSION;
             try
             {
                 FileStream fs = new FileStream(path, FileMode.Create);
@@ -47,10 +44,10 @@ namespace Moein.TimeSystem
         /// </summary>
         public static List<T> Load<T>(string subDirectory, string fileName)
         {
-            string path = MAIN_DIRECTORY + subDirectory + "/" + fileName + RECORD_FILE_EXTENSION;
+            string path = MAIN_DIRECTORY + subDirectory + "/" + fileName; // + RECORD_FILE_EXTENSION;
             try
             {
-                TextAsset binaryFile = Resources.Load<TextAsset>(path);
+                TextAsset binaryFile = (TextAsset) Resources.Load(path);
                 Stream s = new MemoryStream(binaryFile.bytes);
                 BinaryFormatter formatter = new BinaryFormatter();
 
@@ -60,10 +57,10 @@ namespace Moein.TimeSystem
 
                 return (List<T>) formatter.Deserialize(s);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 #if UNITY_EDITOR
-                Debug.Log($"File Loaded Failed. {path}");
+                Debug.LogError($"File Loaded Failed. {path}, {e.Message}");
 #endif
                 return new List<T>();
             }
