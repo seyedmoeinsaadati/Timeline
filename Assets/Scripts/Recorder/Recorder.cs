@@ -8,15 +8,6 @@ using UnityEditor;
 
 namespace Moein.TimeSystem
 {
-    public enum RecordState
-    {
-        Stop,
-        Recording,
-        ForwardPlaying,
-        BackwardPlaying,
-        Pause
-    }
-
     public enum HandlingType
     {
         Manual
@@ -24,21 +15,45 @@ namespace Moein.TimeSystem
 
     public class Recorder : MonoBehaviour
     {
-        [HideInInspector] public RecordState state;
+        public enum RecorderState
+        {
+            Stop,
+            Recording,
+            Playing
+        }
 
-        [Header("Config")] [SerializeField] private string takeName = "TakeName";
+        [HideInInspector] public RecorderState state;
+
+
+        #region Record Fields
+
+        [Header("Record Fields")] [SerializeField]
+        private string takeName = "TakeName";
 
         [SerializeField, Min(1), Tooltip("Increase value after record")]
         private int takeNumber = 1;
 
-        [SerializeField] private HandlingType handlingType;
         [SerializeField] private float captureInterval = .5f;
+        // [SerializeField] private HandlingType handlingType;
 
-        [Header("Control Key"), Space(5)] public KeyCode startRecordKey = KeyCode.R;
-        public KeyCode stopRecordKey = KeyCode.E;
+        [Header("Control Recording Key"), Space(5)]
+        public KeyCode startRecordKey = KeyCode.R;
 
-        private List<Transform> transforms;
-        private List<TransformRecordModel> transformRecordModels;
+        public KeyCode stopKey = KeyCode.E;
+
+        #endregion
+
+        #region Player Fields
+
+        [Header("Player Fields")] [SerializeField]
+        private KeyCode forwardPlayKey = KeyCode.W;
+
+        [SerializeField] private KeyCode backwardPlayKey = KeyCode.Q;
+        public float timeScale = 1;
+
+        #endregion
+
+        private FileTimeline[] timelines = null;
         private float startRecordTime;
         private int captureCount;
 
@@ -53,26 +68,18 @@ namespace Moein.TimeSystem
         {
             FindObjects();
             SetRecordConfig();
+
+            Load();
         }
 
         private void FindObjects()
         {
-            // find objects
-            transforms = new List<Transform>();
-            transforms.AddRange(transform.GetComponentsInChildren<Transform>(false));
+            timelines = GetComponentsInChildren<FileTimeline>(false);
 
-            if (transforms.Count > 0)
+            for (int i = 0; i < timelines.Length; i++)
             {
-                // create recordModels from Objects
-                transformRecordModels = new List<TransformRecordModel>();
-                for (int i = 0; i < transforms.Count; i++)
-                {
-                    var model = new TransformRecordModel();
-                    model.timeline.SetTargetComponent(transforms[i]);
-                    model.fileName = GetFileName(transforms[i]);
-                    transforms[i].name = $"{model.fileName} ({transforms[i].name})";
-                    transformRecordModels.Add(model);
-                }
+                timelines[i].FileName = GetFileName(timelines[i].transform);
+                timelines[i].transform.name = $"{timelines[i].FileName} ({timelines[i].transform.name})";
             }
         }
 
@@ -93,13 +100,14 @@ namespace Moein.TimeSystem
 
         public void StartRecording()
         {
-            state = RecordState.Recording;
+            state = RecorderState.Recording;
             startRecordTime = Time.time;
         }
 
         public void StopRecording()
         {
-            state = RecordState.Stop;
+            state = RecorderState.Stop;
+
 
             Save();
             takeNumber++;
@@ -109,27 +117,14 @@ namespace Moein.TimeSystem
             startRecordTime = 0;
 #endif
 
-            // load tape for ready to play
             Load();
         }
 
-        // timers
         private float capturingTimer = 0;
-        private float recordingTimer = 0;
-        private float delayTimer = 0;
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(startRecordKey))
-                StartRecording();
-            else if (Input.GetKeyDown(stopRecordKey))
-                StopRecording();
-        }
-
-        // capturing data per inteval 
         private void FixedUpdate()
         {
-            if (state == RecordState.Recording)
+            if (state == RecorderState.Recording)
             {
                 capturingTimer += Time.fixedDeltaTime;
                 if (capturingTimer > captureInterval)
@@ -138,16 +133,65 @@ namespace Moein.TimeSystem
                     capturingTimer = 0;
                 }
             }
+            else if (state == RecorderState.Playing)
+            {
+                if (timeScale >= 0)
+                {
+                    ProgressTimelines();
+                }
+                else
+                {
+                    RewindTimelines();
+                }
+            }
         }
 
         private void Capture()
         {
-            for (int i = 0; i < transformRecordModels.Count; i++)
+            for (int i = 0; i < timelines.Length; i++)
             {
-                transformRecordModels[i].timeline.CaptureSnapshot();
+                timelines[i].CaptureComponents();
             }
 
             captureCount++;
+        }
+
+        #endregion
+
+        #region Playing
+
+        public void StopPlaying()
+        {
+            state = RecorderState.Stop;
+            timeScale = 0;
+        }
+
+        public void ForwardPlaying()
+        {
+            state = RecorderState.Playing;
+            timeScale = 1;
+        }
+
+        public void BackwardPlaying()
+        {
+            state = RecorderState.Playing;
+            timeScale = -1;
+        }
+
+        private void ProgressTimelines()
+        {
+            for (int i = 0; i < timelines.Length; i++)
+            {
+                timelines[i].Progress(timeScale);
+            }
+        }
+
+        private void RewindTimelines()
+        {
+            for (int i = 0; i < timelines.Length; i++)
+            {
+                timelines[i].Rewind(timeScale);
+            }
         }
 
         #endregion
@@ -156,21 +200,46 @@ namespace Moein.TimeSystem
 
         private void Save()
         {
-            for (int i = 0; i < transformRecordModels.Count; i++)
+            for (int i = 0; i < timelines.Length; i++)
             {
-                transformRecordModels[i].Save(DirectoryName);
+                timelines[i].SaveComponents(DirectoryName);
             }
         }
 
         private void Load()
         {
-            for (int i = 0; i < transformRecordModels.Count; i++)
+            for (int i = 0; i < timelines.Length; i++)
             {
-                transformRecordModels[i].Load(DirectoryName);
+                timelines[i].LoadComponents(DirectoryName, RecordingTime, captureInterval);
             }
         }
 
         #endregion
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(startRecordKey))
+                StartRecording();
+            else if (Input.GetKeyDown(stopKey))
+            {
+                if (state == RecorderState.Recording)
+                {
+                    StopRecording();
+                }
+                else if (state == RecorderState.Playing)
+                {
+                    StopPlaying();
+                }
+            }
+            else if (Input.GetKeyDown(forwardPlayKey))
+            {
+                ForwardPlaying();
+            }
+            else if (Input.GetKeyDown(backwardPlayKey))
+            {
+                BackwardPlaying();
+            }
+        }
 
         private void OnGUI()
         {
@@ -178,104 +247,66 @@ namespace Moein.TimeSystem
 
             GUILayout.Label($"Recording State: {state}");
 
-            if (state == RecordState.Recording)
+            if (state == RecorderState.Recording)
             {
                 GUILayout.Label($"Recording Time: {RecordingTime}");
                 GUILayout.Label($"Capturing Count: {CaptureCount}");
             }
+            else if (state == RecorderState.Playing)
+            {
+                GUILayout.Label($"Time Scale: {timeScale}");
+            }
         }
-
-        // lerp =>
-        // a: prevTapeIndex
-        // b: nextTapeIndex
-        // t: capturingTime/capturingInterval
     }
 
 #if UNITY_EDITOR
 
-    [CustomEditor(typeof(Recorder))]
-    public class RecorderEditor : Editor
-    {
-        private Recorder recorder;
-
-        private void OnEnable()
-        {
-            recorder = target as Recorder;
-        }
-
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-        }
-    }
+    // [CustomEditor(typeof(Recorder))]
+    // public class RecorderEditor : Editor
+    // {
+    //     private Recorder recorder;
+    //
+    //     private void OnEnable()
+    //     {
+    //         recorder = target as Recorder;
+    //     }
+    //
+    //     public override void OnInspectorGUI()
+    //     {
+    //         base.OnInspectorGUI();
+    //
+    //         // if (Application.isPlaying)
+    //         // {
+    //
+    //         GUILayout.Space(10);
+    //         GUILayout.BeginHorizontal();
+    //         if (GUILayout.Button("<"))
+    //         {
+    //             recorder.state = Recorder.RecorderState.Playing;
+    //             recorder.timeScale = -1;
+    //         }
+    //
+    //         if (GUILayout.Button("R"))
+    //         {
+    //             recorder.state = Recorder.RecorderState.Recording;
+    //             recorder.timeScale = -1;
+    //         }
+    //
+    //         if (GUILayout.Button("P"))
+    //         {
+    //         }
+    //
+    //         if (GUILayout.Button(">"))
+    //         {
+    //             recorder.state = Recorder.RecorderState.Playing;
+    //             recorder.timeScale = 1;
+    //         }
+    //
+    //
+    //         GUILayout.EndHorizontal();
+    //         // }
+    //     }
+    // }
 
 #endif
 }
-
-
-//    case RecordState.ForwardPlaying:
-//                    if (index > tape.Count - 1)
-//{
-//    // end of tape
-//    ChangeState(RecordState.Stop);
-//    OnFinishPlay?.Invoke();
-//    break;
-//}
-//// Load and Update() new Transform
-//ti = tape[index++];
-//UpdateTransform(ti);
-//break;
-//                case RecordState.BackwardPlaying:
-//                    if (index < 0)
-//{
-//    // end of tape
-//    ChangeState(RecordState.Stop);
-//    OnFinishPlay?.Invoke();
-//    break;
-//}
-//// Load and Update() new Transform
-//ti = tape[index--];
-//UpdateTransform(ti);
-//break;
-//                case RecordState.Stop:
-//                    break;
-
-//public void DoPlay(bool isInverse = false)
-//{
-//    if (state == RecordState.Recording)
-//    {
-//        return;
-//    }
-
-//    isBackward = isInverse;
-
-//    if (isBackward)
-//    {
-//        index = tape.Count - 1;
-//        ChangeState(RecordState.BackwardPlaying);
-//    }
-//    else
-//    {
-//        index = 0;
-//        ChangeState(RecordState.ForwardPlaying);
-//    }
-//    OnPlay?.Invoke();
-
-//}
-
-//public void DoPause()
-//{
-//    if (state == RecordState.Recording)
-//    {
-//        return;
-//    }
-//    if (state == RecordState.ForwardPlaying)
-//    {
-//        ChangeState(RecordState.Pause);
-//    }
-//    if (state == RecordState.BackwardPlaying)
-//    {
-//        ChangeState(RecordState.Pause);
-//    }
-//    OnPause?.Invoke();
-//}
