@@ -10,7 +10,7 @@ namespace Moein.TimeSystem
     {
         private static TimeRecorderFileHandler instance;
         public static string ASSETS_PATH = "Assets/Resources/";
-        public static string MAIN_DIRECTORY = "TimeRecordFiles/";
+        public static string MAIN_DIRECTORY = "TimelineFiles/";
         public static string RECORD_FILE_EXTENSION = ".bytes";
 
         /// <summary>
