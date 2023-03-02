@@ -28,6 +28,7 @@ namespace Moein.TimeSystem
 
         public abstract void ApplySnapshot(TSnapshot snapshot);
 
-        public abstract void LerpSnapshot(int index1, int index2, float t);
+        public abstract TSnapshot LerpSnapshot(TSnapshot from, TSnapshot to, float t);
+        public TSnapshot LerpSnapshot(int index1, int index2, float t) => LerpSnapshot(tape[index1], tape[index2], t);
     }
 }

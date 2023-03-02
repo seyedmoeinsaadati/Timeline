@@ -21,18 +21,16 @@ public class Timeline : MonoBehaviour
 
     public void Progress(float timeScale)
     {
-        // calculate tape pointer based on recordingTime
-        // calculate lerpT base on recordingTime
         currentPointer = (int) (time / captureInterval);
-        lerpT = time - (currentPointer * captureInterval);
 
-        if (storeType == StoreType.NoMemory || headIndex == currentPointer)
+        if (storeType == StoreType.NoMemory || currentPointer == headIndex)
         {
             Capture();
         }
         else
         {
-            transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT);
+            lerpT = timeScale == 0 ? lerpT : time - (currentPointer * captureInterval);
+            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT));
         }
 
         time += Time.fixedDeltaTime * timeScale;
@@ -47,12 +45,12 @@ public class Timeline : MonoBehaviour
 
         if (currentPointer == headIndex)
         {
-            transformTimeline.LerpSnapshot(currentPointer, currentPointer, lerpT);
+            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer, currentPointer, lerpT));
             return;
         }
 
         lerpT = time - (currentPointer * captureInterval);
-        transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT);
+        transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(currentPointer, currentPointer + 1, lerpT));
 
 
         time += Time.fixedDeltaTime * timeScale;

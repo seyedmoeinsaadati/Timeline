@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Moein.TimeSystem
 {
@@ -21,9 +20,9 @@ namespace Moein.TimeSystem
             component.pitch = snapshot;
         }
 
-        public override void LerpSnapshot(int index1, int index2, float t)
+        public override float LerpSnapshot(float from, float to, float t)
         {
-            ApplySnapshot(Mathf.Lerp(tape[index1], tape[index2], t));
+            return Mathf.Lerp(from, to, t);
         }
     }
 }

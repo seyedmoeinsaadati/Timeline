@@ -5,12 +5,12 @@ namespace Moein.TimeSystem
 {
     public class TimelineController : MonoBehaviour
     {
-        private float timeScale = 1;
+        [SerializeField] private float timeScale = 1;
         [SerializeField] private List<Timeline> timelines;
 
         private void FixedUpdate()
         {
-            if (timeScale > 0)
+            if (timeScale >= 0)
             {
                 ProgressTimelines();
             }

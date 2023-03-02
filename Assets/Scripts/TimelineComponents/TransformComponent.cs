@@ -25,9 +25,9 @@ namespace Moein.TimeSystem
             component.localRotation = snapshot.rotation;
         }
 
-        public override void LerpSnapshot(int index1, int index2, float t)
+        public override TransformSnapshot LerpSnapshot(TransformSnapshot @from, TransformSnapshot to, float t)
         {
-            ApplySnapshot(TransformSnapshot.Lerp(tape[index1], tape[index2], t));
+            return TransformSnapshot.Lerp(from, to, t);
         }
     }
 }
