@@ -18,12 +18,11 @@ namespace Moein.TimeSystem
         private float lerpT;
         [HideInInspector] public float lastCapturingTime;
 
+        public float fixedDeltaTime;
 
         private void Start()
         {
             timePointer = headIndex = -1;
-            capturingTimer = captureInterval;
-
             InitComponents();
             // children = GetComponentsInChildren<Timeline>();
         }
@@ -31,10 +30,13 @@ namespace Moein.TimeSystem
         public void Progress(float timeScale)
         {
             time += Time.fixedDeltaTime * timeScale;
-            time = Mathf.Max(0, time);
             timePointer = (int) (time / captureInterval);
 
-            Capture();
+            if (time >= captureInterval * (headIndex + 1))
+            {
+                CaptureSnapshots();
+                headIndex++;
+            }
         }
 
         public void Rewind(float timeScale)
@@ -57,23 +59,19 @@ namespace Moein.TimeSystem
 
         #region Capturing
 
-        private float capturingTimer;
-
-        private void Capture()
-        {
-            capturingTimer += Time.fixedDeltaTime;
-            if (capturingTimer >= captureInterval)
-            {
-                CaptureSnapshots();
-                capturingTimer = 0;
-                headIndex++;
-            }
-        }
+        // private float capturingTimer;
+        // 
+        // private void Capture()
+        // {
+        //     CaptureSnapshots();
+        //         // capturingTimer = 0;
+        //         lastCapturingTime = time;
+        //         headIndex++;
+        // }
 
 
         private void CaptureSnapshots()
         {
-            // if (currentPointer != headIndex) return;
             transformTimeline.CaptureSnapshot();
         }
 
