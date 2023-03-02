@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Moein.TimeSystem
 {
     public class TransformComponent : TimelineComponent<Transform, TransformSnapshot>
     {
-        public TransformComponent(Transform component) : base(component)
+        public TransformComponent(Transform component, int tapeSize) : base(component, tapeSize)
         {
         }
 
@@ -14,9 +13,15 @@ namespace Moein.TimeSystem
             get { return new TransformSnapshot(component.localPosition, component.localRotation); }
         }
 
-        public override void CaptureSnapshot()
+        public override void CaptureSnapshot(int index)
         {
-            tape.Add(new TransformSnapshot(component.localPosition, component.localRotation));
+            if (index >= CaptureCount)
+            {
+                tape.Add(new TransformSnapshot(component.localPosition, component.localRotation));
+                return;
+            }
+
+            tape[index] = new TransformSnapshot(component.localPosition, component.localRotation);
         }
 
         public override void ApplySnapshot(TransformSnapshot snapshot)

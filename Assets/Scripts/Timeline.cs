@@ -7,19 +7,24 @@ namespace Moein.TimeSystem
 {
     public class Timeline : MonoBehaviour
     {
-        [SerializeField] public bool withMemory;
+        [SerializeField] public bool saveMemory;
         [SerializeField] public float captureInterval = .5f;
+
+        [SerializeField, Min(1)] public float memoryTime = 30f;
         // private Timeline[] children;
 
         [HideInInspector] public float time;
-        [HideInInspector] public int timePointer;
+        [HideInInspector] public int pointer;
         [HideInInspector] public int headIndex;
         private float lerpT;
-        [HideInInspector] public float lastCapturingTime;
+        [HideInInspector] public float lastFulltime;
+        public int maxTimelineCaptureCount;
 
         private void Start()
         {
-            timePointer = headIndex = -1;
+            pointer = headIndex = -1;
+            maxTimelineCaptureCount = Mathf.RoundToInt(memoryTime / captureInterval);
+
             InitComponents();
             // children = GetComponentsInChildren<Timeline>();
         }
@@ -27,41 +32,41 @@ namespace Moein.TimeSystem
         public void Progress(float timeScale)
         {
             time += Time.fixedDeltaTime * timeScale;
-            timePointer = (int) (time / captureInterval);
+            time = Mathf.Clamp(time, 0, memoryTime);
+            pointer = (int) (time / captureInterval);
 
-            if (withMemory)
+            if (pointer < headIndex)
             {
-                if (timePointer < headIndex)
+                if (saveMemory)
                 {
                     // forwarding
-                    lerpT = (time - timePointer * captureInterval) / captureInterval;
-                    transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(timePointer, timePointer + 1,
-                        lerpT));
-
+                    lerpT = (time - pointer * captureInterval) / captureInterval;
+                    transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, lerpT));
                     return;
                 }
+
+                headIndex = pointer;
             }
 
-            if (timePointer < headIndex) headIndex = timePointer;
             Capture();
         }
 
         public void Rewind(float timeScale)
         {
             time += Time.fixedDeltaTime * timeScale;
-            time = Mathf.Max(0, time);
+            time = Mathf.Clamp(time, 0, memoryTime);
 
-            timePointer = (int) (time / captureInterval);
-            lerpT = (time - timePointer * captureInterval) / captureInterval;
+            pointer = (int) (time / captureInterval);
+            lerpT = (time - pointer * captureInterval) / captureInterval;
 
-            if (timePointer == headIndex)
+            if (pointer == headIndex)
             {
                 transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(transformTimeline.HeadSnapshot,
                     transformTimeline.CurrentSnapshot, lerpT));
                 return;
             }
 
-            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(timePointer, timePointer + 1, lerpT));
+            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, lerpT));
         }
 
         #region Capturing
@@ -75,10 +80,16 @@ namespace Moein.TimeSystem
             }
         }
 
-
         private void CaptureSnapshots()
         {
-            transformTimeline.CaptureSnapshot();
+            if (headIndex >= maxTimelineCaptureCount)
+            {
+                transformTimeline.Tape.RemoveAt(0);
+                headIndex = maxTimelineCaptureCount - 1;
+                time -= captureInterval;
+            }
+
+            transformTimeline.CaptureSnapshot(headIndex);
         }
 
         #endregion
@@ -90,7 +101,8 @@ namespace Moein.TimeSystem
 
         private void InitComponents()
         {
-            transformTimeline = new TransformComponent(transform);
+            transformTimeline = new TransformComponent(transform, maxTimelineCaptureCount);
+            Debug.Log($"transformTimeline {transformTimeline.Tape.Capacity}");
         }
 
         #endregion
@@ -113,10 +125,10 @@ namespace Moein.TimeSystem
             base.OnInspectorGUI();
 
             GUILayout.Space(5);
-            GUILayout.Label($"Last Capturing Time: {timeline.lastCapturingTime}");
+            GUILayout.Label($"Last Capturing Time: {timeline.lastFulltime}");
             GUILayout.Label($"Time: {timeline.time}");
             GUILayout.Label($"Head Index: {timeline.headIndex}");
-            GUILayout.Label($"Current Pointer: {timeline.timePointer}");
+            GUILayout.Label($"Current Pointer: {timeline.pointer}");
         }
     }
 

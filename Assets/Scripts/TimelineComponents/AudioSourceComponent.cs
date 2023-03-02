@@ -4,15 +4,15 @@ namespace Moein.TimeSystem
 {
     public class AudioSourceComponent : TimelineComponent<AudioSource, float>
     {
-        public AudioSourceComponent(AudioSource component) : base(component)
+        public AudioSourceComponent(AudioSource component, int tapeSize) : base(component, tapeSize)
         {
         }
 
         public override float CurrentSnapshot => component.pitch;
 
-        public override void CaptureSnapshot()
+        public override void CaptureSnapshot(int index)
         {
-            tape.Add(component.pitch);
+            tape[index] = component.pitch;
         }
 
         public override void ApplySnapshot(float snapshot)

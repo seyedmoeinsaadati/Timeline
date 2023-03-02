@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 739c59cea4a13704a96a75cd43dbd9f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeScale: 1
   timelines:
   - {fileID: 669194766}
 --- !u!4 &127130860
@@ -364,8 +365,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1c48c2314037342a4c5a3fc2550452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveMemory: 1
   captureInterval: 0.5
-  storeType: 1
+  memoryTime: 20
+  time: 0
+  pointer: 0
+  headIndex: 0
+  lastFulltime: 0
+  maxTimelineCaptureCount: 0
 --- !u!1 &1924100501
 GameObject:
   m_ObjectHideFlags: 0
