@@ -6,14 +6,17 @@ namespace Moein.TimeSystem
     {
         protected TComponent component;
         protected List<TSnapshot> tape;
-        
+
         public List<TSnapshot> Tape
         {
             get => tape;
             set => tape = value;
         }
 
-        public TimelineComponent(TComponent component)
+        public int CaptureCount => tape.Count;
+        public abstract TSnapshot CurrentSnapshot { get; }
+
+        protected TimelineComponent(TComponent component)
         {
             this.component = component;
             tape = new List<TSnapshot>();
@@ -26,7 +29,5 @@ namespace Moein.TimeSystem
         public abstract void ApplySnapshot(TSnapshot snapshot);
 
         public abstract void LerpSnapshot(int index1, int index2, float t);
-
-        public int SamplingCount => tape.Count;
     }
 }

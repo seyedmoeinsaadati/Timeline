@@ -5,7 +5,14 @@ namespace Moein.TimeSystem
 {
     public class TransformComponent : TimelineComponent<Transform, TransformSnapshot>
     {
-        public TransformComponent(Transform component) : base(component) { }
+        public TransformComponent(Transform component) : base(component)
+        {
+        }
+
+        public override TransformSnapshot CurrentSnapshot
+        {
+            get { return new TransformSnapshot(component.localPosition, component.localRotation); }
+        }
 
         public override void CaptureSnapshot()
         {

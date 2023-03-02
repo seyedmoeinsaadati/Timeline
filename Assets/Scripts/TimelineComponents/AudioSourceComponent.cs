@@ -3,9 +3,13 @@ using UnityEngine;
 
 namespace Moein.TimeSystem
 {
-    public class AudioSourceCompontent : TimelineComponent<AudioSource, float>
+    public class AudioSourceComponent : TimelineComponent<AudioSource, float>
     {
-        public AudioSourceCompontent(AudioSource component) : base(component) { }
+        public AudioSourceComponent(AudioSource component) : base(component)
+        {
+        }
+
+        public override float CurrentSnapshot => component.pitch;
 
         public override void CaptureSnapshot()
         {
