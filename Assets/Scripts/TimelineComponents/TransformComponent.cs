@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Moein.Timeline
+namespace Moein.TimeSystem
 {
     public class TransformComponent : TimelineComponent<Transform, TransformSnapshot>
     {

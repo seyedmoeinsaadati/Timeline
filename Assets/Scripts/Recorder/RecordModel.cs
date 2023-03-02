@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Moein.Timeline
+namespace Moein.TimeSystem
 {
     public abstract class RecordModel<TComponent, TSnapshot>
     {

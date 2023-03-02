@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Moein.Timeline
+namespace Moein.TimeSystem
 {
     public abstract class TimelineComponent<TComponent, TSnapshot>
     {

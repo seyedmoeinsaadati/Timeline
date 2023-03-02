@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace Moein.Timeline
+namespace Moein.TimeSystem
 {
     public enum RecordState
     {
@@ -90,6 +90,7 @@ namespace Moein.Timeline
         #endregion
 
         #region Recording
+
         public void StartRecording()
         {
             state = RecordState.Recording;
