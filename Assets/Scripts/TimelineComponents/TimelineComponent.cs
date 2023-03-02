@@ -13,6 +13,8 @@ namespace Moein.TimeSystem
             set => tape = value;
         }
 
+        public TSnapshot HeadSnapshot => tape[CaptureCount - 1];
+
         public int CaptureCount => tape.Count;
         public abstract TSnapshot CurrentSnapshot { get; }
 
