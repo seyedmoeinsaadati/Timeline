@@ -18,6 +18,12 @@ namespace Moein.TimeSystem
         public int CaptureCount => tape.Count;
         public abstract TSnapshot CurrentSnapshot { get; }
 
+        protected TimelineComponent(TComponent component)
+        {
+            this.component = component;
+            tape = new List<TSnapshot>();
+        }
+
         protected TimelineComponent(TComponent component, int maxTapeSize)
         {
             this.component = component;
@@ -33,6 +39,7 @@ namespace Moein.TimeSystem
         public void SetTargetComponent(TComponent component) => this.component = component;
 
         public abstract void CaptureSnapshot(int index);
+        public abstract void CaptureSnapshot();
 
         public abstract void ApplySnapshot(TSnapshot snapshot);
 

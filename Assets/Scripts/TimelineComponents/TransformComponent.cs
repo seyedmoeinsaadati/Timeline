@@ -4,6 +4,10 @@ namespace Moein.TimeSystem
 {
     public class TransformComponent : TimelineComponent<Transform, TransformSnapshot>
     {
+        public TransformComponent(Transform component) : base(component)
+        {
+        }
+
         public TransformComponent(Transform component, int tapeSize) : base(component, tapeSize)
         {
         }
@@ -16,12 +20,14 @@ namespace Moein.TimeSystem
         public override void CaptureSnapshot(int index)
         {
             if (index >= CaptureCount)
-            {
-                tape.Add(new TransformSnapshot(component.localPosition, component.localRotation));
-                return;
-            }
+                CaptureSnapshot();
+            else
+                tape[index] = new TransformSnapshot(component.localPosition, component.localRotation);
+        }
 
-            tape[index] = new TransformSnapshot(component.localPosition, component.localRotation);
+        public override void CaptureSnapshot()
+        {
+            tape.Add(new TransformSnapshot(component.localPosition, component.localRotation));
         }
 
         public override void ApplySnapshot(TransformSnapshot snapshot)
