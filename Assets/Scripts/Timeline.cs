@@ -3,31 +3,23 @@ using UnityEngine;
 
 namespace Moein.TimeSystem
 {
-    public class Timeline : MonoBehaviour
+    public class Timeline : TimelineBase
     {
         // private Timeline[] children;
         [SerializeField] public bool saveMemory;
-        [SerializeField] public float captureInterval = .5f;
 
-        [SerializeField, Min(1)] public float recordingTime = 30f;
-
-        private float t;
-        [HideInInspector, SerializeField] private float timelineTime; // between 0, recordingTime
-        private int pointer;
         private int headIndex;
-        private int maxTimelineCaptureCount;
 
-        private void Start()
+        protected override void Init()
         {
             pointer = headIndex = -1;
             maxTimelineCaptureCount = Mathf.RoundToInt(recordingTime / captureInterval);
-            InitComponents();
-            // children = GetComponentsInChildren<Timeline>();
+            base.Init();
         }
 
-        public void Progress(float timeScale)
+        public override void Progress(float timeScale)
         {
-            CalculateTiming(timeScale);
+            CalculateLerping(timeScale);
             if (pointer < headIndex)
             {
                 if (saveMemory)
@@ -43,9 +35,9 @@ namespace Moein.TimeSystem
             Capture();
         }
 
-        public void Rewind(float timeScale)
+        public override void Rewind(float timeScale)
         {
-            CalculateTiming(timeScale);
+            CalculateLerping(timeScale);
             if (pointer == headIndex)
             {
                 transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(transformTimeline.HeadSnapshot,
@@ -56,7 +48,7 @@ namespace Moein.TimeSystem
             ApplyComponents();
         }
 
-        private void CalculateTiming(float timeScale)
+        protected override void CalculateLerping(float timeScale)
         {
             timelineTime += Time.fixedDeltaTime * timeScale;
             timelineTime = Mathf.Clamp(timelineTime, 0, recordingTime);
@@ -64,7 +56,7 @@ namespace Moein.TimeSystem
             t = (timelineTime - pointer * captureInterval) / captureInterval;
         }
 
-        private void Capture()
+        public override void Capture()
         {
             if (timelineTime >= captureInterval * (headIndex + 1))
             {
@@ -83,19 +75,12 @@ namespace Moein.TimeSystem
 
         #region TimelineComponents
 
-        private TransformComponent transformTimeline;
-
-        private void InitComponents()
-        {
-            transformTimeline = new TransformComponent(transform, maxTimelineCaptureCount);
-        }
-
-        private void CaptureComponents()
+        protected override void CaptureComponents()
         {
             transformTimeline.CaptureSnapshot(headIndex);
         }
 
-        private void ApplyComponents()
+        protected override void ApplyComponents()
         {
             transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, t));
         }

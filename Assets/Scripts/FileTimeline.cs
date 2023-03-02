@@ -3,16 +3,9 @@ using UnityEngine;
 
 namespace Moein.TimeSystem
 {
-    public class FileTimeline : MonoBehaviour
+    public class FileTimeline : TimelineBase
     {
         [SerializeField] private string fileName;
-        [SerializeField] private float captureInterval = .5f;
-
-        private float t;
-        [HideInInspector, SerializeField] private float timelineTime; // between 0, recordingTime
-        [SerializeField] private int pointer;
-        [SerializeField] private int maxTimelineCaptureCount;
-
 
         public string FileName
         {
@@ -20,33 +13,26 @@ namespace Moein.TimeSystem
             set => fileName = value;
         }
 
-        private void Start()
+        protected override void Init()
         {
             pointer = -1;
-            InitComponents();
-            // children = GetComponentsInChildren<Timeline>();
+            base.Init();
         }
 
-        public void Progress(float timeScale)
+        public override void Progress(float timeScale)
         {
-            CalculateTiming(timeScale);
+            CalculateLerping(timeScale);
 
             ApplyComponents();
         }
 
-        public void Rewind(float timeScale)
+        public override void Rewind(float timeScale)
         {
-            CalculateTiming(timeScale);
-
-            // transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(transformTimeline.HeadSnapshot,
-            //     transformTimeline.CurrentSnapshot, t));
-            // return;
-
-
+            CalculateLerping(timeScale);
             ApplyComponents();
         }
 
-        private void CalculateTiming(float timeScale)
+        protected override void CalculateLerping(float timeScale)
         {
             timelineTime += Time.fixedDeltaTime * timeScale;
             timelineTime = Mathf.Clamp(timelineTime, 0, maxTimelineCaptureCount * captureInterval);
@@ -54,21 +40,24 @@ namespace Moein.TimeSystem
             t = (timelineTime - pointer * captureInterval) / captureInterval;
         }
 
+        public override void Capture()
+        {
+            CaptureComponents();
+        }
+
         #region TimelineComponents
 
-        private TransformComponent transformTimeline;
-
-        private void InitComponents()
+        protected override void InitComponents()
         {
             transformTimeline = new TransformComponent(transform);
         }
 
-        public void CaptureComponents()
+        protected override void CaptureComponents()
         {
             transformTimeline.CaptureSnapshot();
         }
 
-        private void ApplyComponents()
+        protected override void ApplyComponents()
         {
             if (pointer < maxTimelineCaptureCount - 1)
             {

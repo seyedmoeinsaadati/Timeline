@@ -150,7 +150,7 @@ namespace Moein.TimeSystem
         {
             for (int i = 0; i < timelines.Length; i++)
             {
-                timelines[i].CaptureComponents();
+                timelines[i].Capture();
             }
 
             captureCount++;
