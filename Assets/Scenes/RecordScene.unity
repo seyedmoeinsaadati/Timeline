@@ -247,7 +247,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: 
+  captureInterval: 0.5
   timelineTime: 0
+  pointer: 0
+  headIndex: 0
+  maxTimelineCaptureCount: 0
 --- !u!1 &186571412
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,7 +576,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: 
+  captureInterval: 0.5
   timelineTime: 0
+  pointer: 0
+  headIndex: 0
+  maxTimelineCaptureCount: 0
 --- !u!1 &1182892467
 GameObject:
   m_ObjectHideFlags: 0
@@ -697,7 +705,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: 
+  captureInterval: 0.5
   timelineTime: 0
+  pointer: 0
+  headIndex: 0
+  maxTimelineCaptureCount: 0
 --- !u!1 &1914321400
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,7 +834,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: 
+  captureInterval: 0.5
   timelineTime: 0
+  pointer: 0
+  headIndex: 0
+  maxTimelineCaptureCount: 0
 --- !u!1 &1924100501
 GameObject:
   m_ObjectHideFlags: 0
@@ -1030,4 +1046,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: 
+  captureInterval: 0.5
   timelineTime: 0
+  pointer: 0
+  headIndex: 0
+  maxTimelineCaptureCount: 0

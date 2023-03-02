@@ -367,12 +367,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saveMemory: 1
   captureInterval: 0.5
-  memoryTime: 20
-  time: 0
-  pointer: 0
-  headIndex: 0
-  lastFulltime: 0
-  maxTimelineCaptureCount: 0
+  recordingTime: 10
+  timelineTime: 0
 --- !u!1 &1924100501
 GameObject:
   m_ObjectHideFlags: 0

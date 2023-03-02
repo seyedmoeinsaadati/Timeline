@@ -7,12 +7,12 @@ namespace Moein.TimeSystem
     {
         [SerializeField] private string fileName;
         [SerializeField] private float captureInterval = .5f;
-        [SerializeField, Min(1)] private float recordingTime = 30f;
 
         private float t;
         [HideInInspector, SerializeField] private float timelineTime; // between 0, recordingTime
-        private int pointer;
-        private int headIndex;
+        [SerializeField] private int pointer;
+        [SerializeField] private int maxTimelineCaptureCount;
+
 
         public string FileName
         {
@@ -22,7 +22,7 @@ namespace Moein.TimeSystem
 
         private void Start()
         {
-            pointer = headIndex = -1;
+            pointer = -1;
             InitComponents();
             // children = GetComponentsInChildren<Timeline>();
         }
@@ -30,21 +30,18 @@ namespace Moein.TimeSystem
         public void Progress(float timeScale)
         {
             CalculateTiming(timeScale);
-            if (pointer < headIndex)
-            {
-                ApplyComponents();
-            }
+
+            ApplyComponents();
         }
 
         public void Rewind(float timeScale)
         {
             CalculateTiming(timeScale);
-            if (pointer == headIndex)
-            {
-                transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(transformTimeline.HeadSnapshot,
-                    transformTimeline.CurrentSnapshot, t));
-                return;
-            }
+
+            // transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(transformTimeline.HeadSnapshot,
+            //     transformTimeline.CurrentSnapshot, t));
+            // return;
+
 
             ApplyComponents();
         }
@@ -52,7 +49,7 @@ namespace Moein.TimeSystem
         private void CalculateTiming(float timeScale)
         {
             timelineTime += Time.fixedDeltaTime * timeScale;
-            timelineTime = Mathf.Clamp(timelineTime, 0, recordingTime);
+            timelineTime = Mathf.Clamp(timelineTime, 0, maxTimelineCaptureCount * captureInterval);
             pointer = (int) (timelineTime / captureInterval);
             t = (timelineTime - pointer * captureInterval) / captureInterval;
         }
@@ -73,7 +70,10 @@ namespace Moein.TimeSystem
 
         private void ApplyComponents()
         {
-            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, t));
+            if (pointer < maxTimelineCaptureCount - 1)
+            {
+                transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, t));
+            }
         }
 
         #endregion
@@ -83,47 +83,55 @@ namespace Moein.TimeSystem
             TimeRecorderFileHandler.Save(directory, fileName, transformTimeline.Tape);
         }
 
-        public void LoadComponents(string directory, float duration, float interval)
+        public void LoadComponents(string directory, float interval)
         {
             captureInterval = interval;
-            recordingTime = duration;
-            pointer = headIndex = -1;
+            pointer = -1;
 
             transformTimeline.Tape = TimeRecorderFileHandler.Load<TransformSnapshot>(directory, fileName);
+            maxTimelineCaptureCount = transformTimeline.CaptureCount;
         }
     }
 
 #if UNITY_EDITOR
 
-    // [CustomEditor(typeof(FileTimeline)), CanEditMultipleObjects]
-    // public class FileTimelineEditor : Editor
-    // {
-    //     public override void OnInspectorGUI()
-    //     {
-    //         base.OnInspectorGUI();
-    // serializedObject.Update();
-    // read-only mode
-    // if (Application.isPlaying == false)
-    // {
-    //     DrawDefaultInspector();
-    // }
-    // else
-    // {
-    //     serializedObject.Update();
-    //
-    //     var saveMemory = serializedObject.FindProperty("saveMemory");
-    //     var captureInterval = serializedObject.FindProperty("captureInterval");
-    //     var recordingTime = serializedObject.FindProperty("recordingTime");
-    //     var timelineTime = serializedObject.FindProperty("timelineTime");
-    //
-    //     GUILayout.Label($"Save Memory: {saveMemory}");
-    //     GUILayout.Label($"Capturing Interval: {captureInterval.floatValue}");
-    //     GUILayout.Label($"Recording Time: {recordingTime.floatValue}");
-    //     GUILayout.Space(5);
-    //     GUILayout.Label($"Timeline Time: {timelineTime.floatValue}");
-    // }
-    // }
-    // }
+    [CustomEditor(typeof(FileTimeline)), CanEditMultipleObjects]
+    public class FileTimelineEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            serializedObject.Update();
+            if (Application.isPlaying)
+            {
+                GUILayout.Space(5);
+                var timelineTime = serializedObject.FindProperty("timelineTime");
+                GUILayout.Label($"Timeline Time: {timelineTime.floatValue}");
+            }
+
+            // read-only mode
+            // if (Application.isPlaying == false)
+            // {
+            //     DrawDefaultInspector();
+            // }
+            // else
+            // {
+            //     serializedObject.Update();
+            //
+            //     var saveMemory = serializedObject.FindProperty("saveMemory");
+            //     var captureInterval = serializedObject.FindProperty("captureInterval");
+            //     var recordingTime = serializedObject.FindProperty("recordingTime");
+            //     var timelineTime = serializedObject.FindProperty("timelineTime");
+            //
+            //     GUILayout.Label($"Save Memory: {saveMemory}");
+            //     GUILayout.Label($"Capturing Interval: {captureInterval.floatValue}");
+            //     GUILayout.Label($"Recording Time: {recordingTime.floatValue}");
+            //     GUILayout.Space(5);
+            //     GUILayout.Label($"Timeline Time: {timelineTime.floatValue}");
+            // }
+        }
+    }
 
 #endif
 }
