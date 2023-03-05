@@ -5,6 +5,7 @@ namespace Moein.TimeSystem
 {
     public class Timeline : TimelineBase
     {
+        [SerializeField, Min(1)] protected float recordingTime = 30f;
         [SerializeField] public bool saveMemory;
         private int headIndex;
 

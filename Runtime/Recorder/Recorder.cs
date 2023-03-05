@@ -22,7 +22,6 @@ namespace Moein.TimeSystem
 
         [HideInInspector] public RecorderState state;
 
-
         #region Record Fields
 
         [Header("Record Fields")] [SerializeField]
@@ -44,7 +43,9 @@ namespace Moein.TimeSystem
         #region Player Fields
 
         [Header("Player Fields")] [SerializeField]
-        private KeyCode forwardPlayKey = KeyCode.W;
+        private bool loadOnStart;
+
+        [SerializeField] private KeyCode forwardPlayKey = KeyCode.W;
 
         [SerializeField] private KeyCode backwardPlayKey = KeyCode.Q;
         public float timeScale = 1;
@@ -67,7 +68,7 @@ namespace Moein.TimeSystem
             FindObjects();
             SetRecordConfig();
 
-            Load();
+            if (loadOnStart) Load();
         }
 
         private void FindObjects()

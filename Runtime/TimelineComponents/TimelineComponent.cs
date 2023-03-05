@@ -30,12 +30,6 @@ namespace Moein.TimeSystem
             tape = new List<TSnapshot>(maxTapeSize);
         }
 
-        // public void Init(int maxTapSize)
-        // {
-        //     tape.Clear();
-        //     tape = new List<TSnapshot>(maxTapSize);
-        // }
-
         public void SetTargetComponent(TComponent component) => this.component = component;
 
         public abstract void CaptureSnapshot(int index);

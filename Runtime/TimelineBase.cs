@@ -2,15 +2,17 @@
 
 namespace Moein.TimeSystem
 {
+    [DefaultExecutionOrder(-100)]
     public abstract class TimelineBase : MonoBehaviour
     {
+        [SerializeField] protected bool initilized;
         [SerializeField] protected float captureInterval = .5f;
-        [SerializeField, Min(1)] protected float recordingTime = 30f;
 
         protected float t;
         [HideInInspector, SerializeField] protected float timelineTime; // between 0, recordingTime
         protected int pointer;
         protected int maxTimelineCaptureCount;
+
 
         private void Start()
         {
@@ -20,6 +22,7 @@ namespace Moein.TimeSystem
         protected virtual void Init()
         {
             InitComponents();
+            initilized = true;
         }
 
         public virtual void Progress(float timeScale)
@@ -56,5 +59,6 @@ namespace Moein.TimeSystem
         }
 
         #endregion
+
     }
 }
