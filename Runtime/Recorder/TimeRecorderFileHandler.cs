@@ -10,9 +10,9 @@ namespace Moein.TimeSystem
     {
         [SerializeField] public bool debug = true;
         private static TimeRecorderFileHandler instance;
-        private readonly static string ASSETS_PATH = "Assets/Resources/";
-        private readonly static string MAIN_DIRECTORY = "TimelineFiles/";
-        private readonly static string RECORD_FILE_EXTENSION = ".bytes";
+        private static readonly string ASSETS_PATH = "Assets/Resources/";
+        private static readonly string MAIN_DIRECTORY = "TimelineFiles/";
+        private static readonly string RECORD_FILE_EXTENSION = ".bytes";
 
         /// <summary>
         /// save list<T> as a text file in resources folder
@@ -48,7 +48,7 @@ namespace Moein.TimeSystem
             string path = MAIN_DIRECTORY + subDirectory + "/" + fileName; // + RECORD_FILE_EXTENSION;
             try
             {
-                TextAsset binaryFile = (TextAsset)Resources.Load(path);
+                TextAsset binaryFile = (TextAsset) Resources.Load(path);
                 Stream s = new MemoryStream(binaryFile.bytes);
                 BinaryFormatter formatter = new BinaryFormatter();
 
@@ -56,7 +56,7 @@ namespace Moein.TimeSystem
                 if (instance.debug) Debug.Log($"File Loaded Successfully. {path}");
 #endif
 
-                return (List<T>)formatter.Deserialize(s);
+                return (List<T>) formatter.Deserialize(s);
             }
             catch (Exception e)
             {

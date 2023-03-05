@@ -1,0 +1,15 @@
+{
+    "name": "com.moein.timeline.unity",
+    "references": [
+        "GUID:6e8f3d9e7a193334b99ec01e814cbd95"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
