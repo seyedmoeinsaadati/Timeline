@@ -8,6 +8,12 @@ namespace Moein.TimeSystem
         [SerializeField] protected float timeScale = 1;
         [SerializeField] protected List<TimelineBase> timelines = new List<TimelineBase>();
 
+        public float TimeScale
+        {
+            get => timeScale;
+            set => timeScale = value;
+        }
+
         protected void RewindTimelines()
         {
             for (int i = 0; i < timelines.Count; i++)
