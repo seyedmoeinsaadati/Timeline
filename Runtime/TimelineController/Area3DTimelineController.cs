@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Moein.Core;
 using UnityEngine;
-using Moein.Core;
 
 namespace Moein.TimeSystem
 {
@@ -14,12 +13,6 @@ namespace Moein.TimeSystem
         //}
 
         [SerializeField] private LayerMask layers;
-        private Collider mCollider;
-
-        private void Reset()
-        {
-            mCollider = GetComponent<Collider>();
-        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -29,6 +22,7 @@ namespace Moein.TimeSystem
                 Register(timeline);
             }
         }
+
         private void OnTriggerExit(Collider other)
         {
             var timeline = other.GetComponent<TimelineBase>();
@@ -49,6 +43,5 @@ namespace Moein.TimeSystem
                 RewindTimelines();
             }
         }
-
     }
 }

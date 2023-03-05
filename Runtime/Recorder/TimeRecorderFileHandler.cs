@@ -52,11 +52,13 @@ namespace Moein.TimeSystem
                 Stream s = new MemoryStream(binaryFile.bytes);
                 BinaryFormatter formatter = new BinaryFormatter();
 
+                var result = formatter.Deserialize(s);
+
 #if UNITY_EDITOR
                 if (instance.debug) Debug.Log($"File Loaded Successfully. {path}");
 #endif
 
-                return (List<T>) formatter.Deserialize(s);
+                return (List<T>) result;
             }
             catch (Exception e)
             {

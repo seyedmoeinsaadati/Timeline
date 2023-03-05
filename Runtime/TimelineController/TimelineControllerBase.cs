@@ -40,7 +40,7 @@ namespace Moein.TimeSystem
             }
         }
 
-        void OnDrawGizmos()
+        private void OnDrawGizmos()
         {
             if (timeScale > 0)
             {
