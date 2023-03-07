@@ -27,6 +27,19 @@ namespace Moein.TimeSystem
             tape.Add(component.pitch);
         }
 
+        public override void CaptureSnapshot(int index, float snapshot)
+        {
+            if (index >= CaptureCount)
+                CaptureSnapshot();
+            else
+                tape[index] = component.pitch;
+        }
+
+        public override void CaptureSnapshot(float snapshot)
+        {
+            tape.Add(snapshot);
+        }
+
         public override void ApplySnapshot(float snapshot)
         {
             component.pitch = snapshot;

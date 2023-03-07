@@ -14,7 +14,6 @@ namespace Moein.TimeSystem
         }
 
         public TSnapshot HeadSnapshot => tape[CaptureCount - 1];
-
         public int CaptureCount => tape.Count;
         public abstract TSnapshot CurrentSnapshot { get; }
 
@@ -31,12 +30,11 @@ namespace Moein.TimeSystem
         }
 
         public void SetTargetComponent(TComponent component) => this.component = component;
-
         public abstract void CaptureSnapshot(int index);
         public abstract void CaptureSnapshot();
-
+        public abstract void CaptureSnapshot(int index, TSnapshot snapshot);
+        public abstract void CaptureSnapshot(TSnapshot snapshot);
         public abstract void ApplySnapshot(TSnapshot snapshot);
-
         public abstract TSnapshot LerpSnapshot(TSnapshot from, TSnapshot to, float t);
         public TSnapshot LerpSnapshot(int index1, int index2, float t) => LerpSnapshot(tape[index1], tape[index2], t);
     }

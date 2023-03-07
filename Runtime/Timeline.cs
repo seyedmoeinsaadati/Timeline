@@ -16,15 +16,27 @@ namespace Moein.TimeSystem
             base.Init();
         }
 
-        public override void Progress(float timeScale)
+        public override void Progress(float timescale)
         {
-            CalculateLerping(timeScale);
+            CalculateLerping(timescale);
+            rewindableAnimator.SetSpeed(timescale);
+
             if (pointer < headIndex)
             {
                 if (saveMemory)
                 {
                     // forwarding
                     ApplyComponents();
+
+                    if (animatorPointer <= animatorHeadIndex)
+                    {
+                        if (timelineTime > AnimatorCurrentCapturingTime)
+                        {
+                            animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
+                            animatorPointer++;
+                        }
+                    }
+
                     return;
                 }
 
@@ -34,9 +46,9 @@ namespace Moein.TimeSystem
             Capture();
         }
 
-        public override void Rewind(float timeScale)
+        public override void Rewind(float timescale)
         {
-            CalculateLerping(timeScale);
+            CalculateLerping(timescale);
             if (pointer == headIndex)
             {
                 transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(transformTimeline.HeadSnapshot,
@@ -45,6 +57,20 @@ namespace Moein.TimeSystem
             }
 
             ApplyComponents();
+
+            if (rewindableAnimator != null)
+            {
+                rewindableAnimator.SetSpeed(timescale);
+
+                if (animatorPointer >= 0)
+                {
+                    if (AnimatorCurrentCapturingTime > timelineTime)
+                    {
+                        animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
+                        animatorPointer--;
+                    }
+                }
+            }
         }
 
         protected override void CalculateLerping(float timeScale)

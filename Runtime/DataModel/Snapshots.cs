@@ -2,7 +2,6 @@
 
 namespace Moein.TimeSystem
 {
-    [System.Serializable]
     public class TransformSnapshot
     {
         public SerializableVector3 position;
@@ -21,7 +20,33 @@ namespace Moein.TimeSystem
         {
             var pos = Vector3.Lerp(a.position, b.position, t);
             var rot = Quaternion.Slerp(a.rotation, b.rotation, t);
+
             return new TransformSnapshot(pos, rot);
+        }
+    }
+
+    public class AnimatorSnapshot
+    {
+        public enum ActionType
+        {
+            None = 0,
+            Bool = 1,
+            Float = 2,
+            Int = 3,
+            Trigger = 4
+        }
+
+        public ActionType type;
+        public float time;
+        public string name;
+        public object value;
+
+        public AnimatorSnapshot(float time, string name, object value, ActionType type)
+        {
+            this.time = time;
+            this.type = type;
+            this.name = name;
+            this.value = value;
         }
     }
 }

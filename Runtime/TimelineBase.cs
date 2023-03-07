@@ -6,12 +6,7 @@ namespace Moein.TimeSystem
     public abstract class TimelineBase : MonoBehaviour
     {
         [SerializeField] protected bool initilized;
-        [SerializeField] protected float captureInterval = .5f;
-
-        protected float t;
         [HideInInspector, SerializeField] protected float timelineTime; // between 0, recordingTime
-        protected int pointer;
-        protected int maxTimelineCaptureCount;
 
 
         private void Start()
@@ -25,40 +20,58 @@ namespace Moein.TimeSystem
             initilized = true;
         }
 
-        public virtual void Progress(float timeScale)
-        {
-        }
+        public abstract void Progress(float timescale);
 
-        public virtual void Rewind(float timeScale)
-        {
-        }
+        public abstract void Rewind(float timescale);
 
-        protected virtual void CalculateLerping(float timeScale)
-        {
-        }
 
-        public virtual void Capture()
-        {
-        }
+        protected abstract void CalculateLerping(float timescale);
+
+        public abstract void Capture();
 
         #region TimelineComponents
 
-        protected TransformComponent transformTimeline;
+        // transform
+        [SerializeField] protected float captureInterval = .5f;
+        protected float t;
+        protected int pointer;
+        protected int maxTimelineCaptureCount;
+        protected TransformComponent transformTimeline = null;
+
+
+        // animator
+        protected int animatorHeadIndex;
+        protected int animatorPointer;
+        protected float AnimatorLastCapturingTime => animatorComponent.HeadSnapshot.time;
+        protected float AnimatorCurrentCapturingTime => animatorComponent.Tape[animatorPointer].time;
+        protected RewindableAnimator rewindableAnimator = null;
+        protected AnimatorComponent animatorComponent = null;
 
         protected virtual void InitComponents()
         {
             transformTimeline = new TransformComponent(transform, maxTimelineCaptureCount);
+
+            rewindableAnimator = GetComponent<RewindableAnimator>();
+            if (rewindableAnimator != null)
+            {
+                animatorHeadIndex = animatorPointer = -1;
+                animatorComponent = new AnimatorComponent(rewindableAnimator);
+                rewindableAnimator.OnChangeAnimator(CaptureAnimator);
+            }
         }
 
-        protected virtual void CaptureComponents()
-        {
-        }
+        protected abstract void CaptureComponents();
 
-        protected virtual void ApplyComponents()
+        protected abstract void ApplyComponents();
+
+        protected virtual void CaptureAnimator(AnimatorSnapshot snapshot)
         {
+            snapshot.time = timelineTime;
+            animatorHeadIndex++;
+            animatorPointer = animatorHeadIndex;
+            animatorComponent?.CaptureSnapshot(snapshot);
         }
 
         #endregion
-
     }
 }

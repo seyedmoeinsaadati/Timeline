@@ -30,6 +30,19 @@ namespace Moein.TimeSystem
             tape.Add(new TransformSnapshot(component.localPosition, component.localRotation));
         }
 
+        public override void CaptureSnapshot(int index, TransformSnapshot snapshot)
+        {
+            if (index >= CaptureCount)
+                CaptureSnapshot();
+            else
+                tape[index] = new TransformSnapshot(component.localPosition, component.localRotation);
+        }
+
+        public override void CaptureSnapshot(TransformSnapshot snapshot)
+        {
+            tape.Add(snapshot);
+        }
+
         public override void ApplySnapshot(TransformSnapshot snapshot)
         {
             component.localPosition = snapshot.position;
