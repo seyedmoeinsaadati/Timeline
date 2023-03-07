@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Moein.TimeSystem
 {
+    [Serializable]
     public class TransformSnapshot
     {
         public SerializableVector3 position;
