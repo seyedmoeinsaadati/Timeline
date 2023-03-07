@@ -1,16 +1,7 @@
 ﻿using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace Moein.TimeSystem
 {
-    public enum HandlingType
-    {
-        Manual
-    }
-
     public class Recorder : MonoBehaviour
     {
         public enum RecorderState
@@ -256,55 +247,4 @@ namespace Moein.TimeSystem
             }
         }
     }
-
-#if UNITY_EDITOR
-
-    // [CustomEditor(typeof(Recorder))]
-    // public class RecorderEditor : Editor
-    // {
-    //     private Recorder recorder;
-    //
-    //     private void OnEnable()
-    //     {
-    //         recorder = target as Recorder;
-    //     }
-    //
-    //     public override void OnInspectorGUI()
-    //     {
-    //         base.OnInspectorGUI();
-    //
-    //         // if (Application.isPlaying)
-    //         // {
-    //
-    //         GUILayout.Space(10);
-    //         GUILayout.BeginHorizontal();
-    //         if (GUILayout.Button("<"))
-    //         {
-    //             recorder.state = Recorder.RecorderState.Playing;
-    //             recorder.timeScale = -1;
-    //         }
-    //
-    //         if (GUILayout.Button("R"))
-    //         {
-    //             recorder.state = Recorder.RecorderState.Recording;
-    //             recorder.timeScale = -1;
-    //         }
-    //
-    //         if (GUILayout.Button("P"))
-    //         {
-    //         }
-    //
-    //         if (GUILayout.Button(">"))
-    //         {
-    //             recorder.state = Recorder.RecorderState.Playing;
-    //             recorder.timeScale = 1;
-    //         }
-    //
-    //
-    //         GUILayout.EndHorizontal();
-    //         // }
-    //     }
-    // }
-
-#endif
 }
