@@ -19,7 +19,7 @@ namespace Moein.TimeSystem
         public override void Progress(float timescale)
         {
             CalculateLerping(timescale);
-            rewindableAnimator.SetSpeed(timescale);
+            // rewindableAnimator.SetSpeed(timescale);
 
             if (pointer < headIndex)
             {
@@ -28,14 +28,14 @@ namespace Moein.TimeSystem
                     // forwarding
                     ApplyComponents();
 
-                    if (animatorPointer <= animatorHeadIndex)
-                    {
-                        if (timelineTime > AnimatorCurrentCapturingTime)
-                        {
-                            animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
-                            animatorPointer++;
-                        }
-                    }
+                    // if (animatorPointer <= animatorHeadIndex)
+                    // {
+                    //     if (timelineTime > AnimatorCurrentCapturingTime)
+                    //     {
+                    //         animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
+                    //         animatorPointer++;
+                    //     }
+                    // }
 
                     return;
                 }
@@ -58,19 +58,19 @@ namespace Moein.TimeSystem
 
             ApplyComponents();
 
-            if (rewindableAnimator != null)
-            {
-                rewindableAnimator.SetSpeed(timescale);
-
-                if (animatorPointer >= 0)
-                {
-                    if (AnimatorCurrentCapturingTime > timelineTime)
-                    {
-                        animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
-                        animatorPointer--;
-                    }
-                }
-            }
+            // if (rewindableAnimator != null)
+            // {
+            //     rewindableAnimator.SetSpeed(timescale);
+            //
+            //     if (animatorPointer >= 0)
+            //     {
+            //         if (AnimatorCurrentCapturingTime > timelineTime)
+            //         {
+            //             animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
+            //             animatorPointer--;
+            //         }
+            //     }
+            // }
         }
 
         protected override void CalculateLerping(float timeScale)
@@ -115,7 +115,7 @@ namespace Moein.TimeSystem
 
 #if UNITY_EDITOR
 
-    [CustomEditor(typeof(Timeline))]
+    [CustomEditor(typeof(Timeline)), CanEditMultipleObjects]
     public class TimelineEditor : Editor
     {
         public override void OnInspectorGUI()
