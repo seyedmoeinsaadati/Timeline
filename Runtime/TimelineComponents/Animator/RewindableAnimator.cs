@@ -41,6 +41,7 @@ namespace Moein.TimeSystem
 
         public void SetInteger(string name, int value)
         {
+            if (animator.GetInteger(name) == value) return;
             animator.SetInteger(name, value);
 
             AnimatorSnapshot snapshot =
@@ -55,6 +56,7 @@ namespace Moein.TimeSystem
 
         public void SetFloat(string name, float value)
         {
+            if (animator.GetFloat(name) == value) return;
             animator.SetFloat(name, value);
 
             AnimatorSnapshot snapshot =
@@ -79,8 +81,8 @@ namespace Moein.TimeSystem
 
         public void SetBool(string name, bool value)
         {
+            if (animator.GetBool(name) == value) return;
             animator.SetBool(name, value);
-
             AnimatorSnapshot snapshot =
                 new AnimatorSnapshot(0, name, value, AnimatorSnapshot.ActionType.Bool);
             Capture(snapshot);
