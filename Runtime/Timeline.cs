@@ -7,7 +7,7 @@ namespace Moein.TimeSystem
     {
         [SerializeField, Min(1)] protected float recordingTime = 30f;
         [SerializeField] public bool saveMemory;
-        private int headIndex;
+        protected int headIndex;
 
         protected override void Init()
         {
@@ -19,7 +19,6 @@ namespace Moein.TimeSystem
         public override void Progress(float timescale)
         {
             CalculateLerping(timescale);
-            // rewindableAnimator.SetSpeed(timescale);
 
             if (pointer < headIndex)
             {
@@ -27,16 +26,6 @@ namespace Moein.TimeSystem
                 {
                     // forwarding
                     ApplyComponents();
-
-                    // if (animatorPointer <= animatorHeadIndex)
-                    // {
-                    //     if (timelineTime > AnimatorCurrentCapturingTime)
-                    //     {
-                    //         animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
-                    //         animatorPointer++;
-                    //     }
-                    // }
-
                     return;
                 }
 
@@ -57,20 +46,6 @@ namespace Moein.TimeSystem
             }
 
             ApplyComponents();
-
-            // if (rewindableAnimator != null)
-            // {
-            //     rewindableAnimator.SetSpeed(timescale);
-            //
-            //     if (animatorPointer >= 0)
-            //     {
-            //         if (AnimatorCurrentCapturingTime > timelineTime)
-            //         {
-            //             animatorComponent.ApplySnapshot(animatorComponent.Tape[animatorPointer]);
-            //             animatorPointer--;
-            //         }
-            //     }
-            // }
         }
 
         protected override void CalculateLerping(float timeScale)
