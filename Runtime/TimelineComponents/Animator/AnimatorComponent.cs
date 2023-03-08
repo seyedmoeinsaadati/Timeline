@@ -1,48 +1,88 @@
 ﻿using System;
-using Moein.ComponentInterface;
 using UnityEngine;
 
 namespace Moein.TimeSystem
 {
-    public class AnimatorComponent : TimelineComponent<RewindableAnimator, AnimatorSnapshot>
+    public class AnimatorComponent : TimelineComponent<Animator, float>
     {
-        public AnimatorComponent(RewindableAnimator component) : base(component)
+        private float speed = 1;
+        private int recordedFrames = 100;
+        private bool recording;
+
+        public int RecordedFrames
         {
+            get => recordedFrames;
+            set => recordedFrames = Mathf.Clamp(value, 1, 10000);
         }
 
-        public AnimatorComponent(RewindableAnimator component, int maxTapeSize) : base(component, maxTapeSize)
+        public float Speed
         {
+            get => speed;
+            set => speed = value;
         }
 
-        public override AnimatorSnapshot CurrentSnapshot => null;
+        public AnimatorComponent(Animator component) : base(component)
+        {
+            RecordedFrames = 10000;
+        }
+
+        public AnimatorComponent(Animator component, int maxTapeSize) : base(component, maxTapeSize)
+        {
+            RecordedFrames = 0;
+        }
+
+        public override float CurrentSnapshot => Speed;
 
         public override void CaptureSnapshot(int index)
         {
-            throw new NotImplementedException();
         }
 
         public override void CaptureSnapshot()
         {
-            throw new NotImplementedException();
         }
 
-        public override void CaptureSnapshot(int index, AnimatorSnapshot snapshot)
+        public override void CaptureSnapshot(int index, float snapshot)
         {
-            if (index >= CaptureCount) CaptureSnapshot(snapshot);
-            else tape[index] = snapshot;
         }
 
-        public override void CaptureSnapshot(AnimatorSnapshot snapshot)
+        /// <summary>
+        /// recording management  
+        /// </summary>
+        /// <param name="timescale"></param>
+        public override void CaptureSnapshot(float timescale)
         {
-            tape.Add(snapshot);
+            component.speed = Speed * timescale;
+
+            if (timescale > 0 && recording == false) // Stopped rewind
+            {
+                component.StopPlayback();
+                component.StartRecording(recordedFrames);
+                recording = true;
+            }
         }
 
-        public override void ApplySnapshot(AnimatorSnapshot snapshot)
+        /// <summary>
+        /// playback management
+        /// </summary>
+        /// <param name="timescale"></param>
+        public override void ApplySnapshot(float timescale)
         {
-            component.ApplySnapshot(snapshot);
+            if (recording && timescale < 0) // Start rewinding
+            {
+                component.speed = 0;
+                component.StopRecording();
+                recording = false;
+                component.StartPlayback();
+                component.playbackTime = component.recorderStopTime;
+                return;
+            }
+
+            component.speed = Speed * timescale;
+            component.playbackTime =
+                Mathf.Max(component.recorderStartTime, component.playbackTime + Time.fixedDeltaTime * timescale);
         }
 
-        public override AnimatorSnapshot LerpSnapshot(AnimatorSnapshot from, AnimatorSnapshot to, float t)
+        public override float LerpSnapshot(float from, float to, float t)
         {
             return to;
         }
