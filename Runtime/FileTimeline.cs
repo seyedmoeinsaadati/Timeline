@@ -17,19 +17,20 @@ namespace Moein.TimeSystem
         protected override void Init()
         {
             pointer = -1;
-            base.Init();
+            transformTimeline = new TransformComponent(transform);
+            initialized = true;
         }
 
         public override void Progress(float timeScale)
         {
             CalculateLerping(timeScale);
-            ApplyComponents();
+            Apply();
         }
 
         public override void Rewind(float timeScale)
         {
             CalculateLerping(timeScale);
-            ApplyComponents();
+            Apply();
         }
 
         protected override void CalculateLerping(float timeScale)
@@ -42,30 +43,16 @@ namespace Moein.TimeSystem
 
         public override void Capture()
         {
-            CaptureComponents();
-        }
-
-        #region TimelineComponents
-
-        protected override void InitComponents()
-        {
-            transformTimeline = new TransformComponent(transform);
-        }
-
-        protected override void CaptureComponents()
-        {
             transformTimeline.CaptureSnapshot();
         }
 
-        protected override void ApplyComponents()
+        protected override void Apply()
         {
             if (pointer < maxTimelineCaptureCount - 1)
             {
                 transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, t));
             }
         }
-
-        #endregion
 
         public void SaveComponents(string directory)
         {

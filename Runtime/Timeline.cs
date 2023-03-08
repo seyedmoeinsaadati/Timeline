@@ -8,12 +8,24 @@ namespace Moein.TimeSystem
         [SerializeField, Min(1)] protected float recordingTime = 30f;
         [SerializeField] public bool saveMemory;
         protected int headIndex;
+        private float timescale;
 
         protected override void Init()
         {
             pointer = headIndex = -1;
             maxTimelineCaptureCount = Mathf.RoundToInt(recordingTime / captureInterval);
-            base.Init();
+
+            transformTimeline = new TransformComponent(transform, maxTimelineCaptureCount);
+            var animator = GetComponentInChildren<Animator>();
+            if (animator != null)
+            {
+                animatorComponent = new AnimatorComponent(animator)
+                {
+                    RecordedFrames = (int) (recordingTime * 30)
+                };
+            }
+
+            initialized = true;
         }
 
         public override void Progress(float timescale)
@@ -25,7 +37,7 @@ namespace Moein.TimeSystem
                 if (saveMemory)
                 {
                     // forwarding
-                    ApplyComponents();
+                    Apply();
                     return;
                 }
 
@@ -45,12 +57,13 @@ namespace Moein.TimeSystem
                 return;
             }
 
-            ApplyComponents();
+            Apply();
         }
 
-        protected override void CalculateLerping(float timeScale)
+        protected override void CalculateLerping(float timescale)
         {
-            timelineTime += Time.fixedDeltaTime * timeScale;
+            this.timescale = timescale;
+            timelineTime += Time.fixedDeltaTime * timescale;
             timelineTime = Mathf.Clamp(timelineTime, 0, recordingTime);
             pointer = (int) (timelineTime / captureInterval);
             t = (timelineTime - pointer * captureInterval) / captureInterval;
@@ -69,21 +82,20 @@ namespace Moein.TimeSystem
                     timelineTime -= captureInterval;
                 }
 
-                CaptureComponents();
+                transformTimeline.CaptureSnapshot(headIndex);
             }
+
+            animatorComponent?.CaptureSnapshot(timescale);
+        }
+
+        protected override void Apply()
+        {
+            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, t));
+
+            animatorComponent?.ApplySnapshot(timescale);
         }
 
         #region TimelineComponents
-
-        protected override void CaptureComponents()
-        {
-            transformTimeline.CaptureSnapshot(headIndex);
-        }
-
-        protected override void ApplyComponents()
-        {
-            transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, t));
-        }
 
         #endregion
     }

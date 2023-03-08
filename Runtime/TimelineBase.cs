@@ -9,25 +9,6 @@ namespace Moein.TimeSystem
         [SerializeField] protected bool initialized;
         [HideInInspector, SerializeField] protected float timelineTime; // between 0, recordingTime
 
-        private void Start()
-        {
-            Init();
-        }
-
-        protected virtual void Init()
-        {
-            InitComponents();
-            initialized = true;
-        }
-
-        public abstract void Progress(float timescale);
-
-        public abstract void Rewind(float timescale);
-
-        protected abstract void CalculateLerping(float timescale);
-
-        public abstract void Capture();
-
         #region TimelineComponents
 
         // transform
@@ -36,16 +17,24 @@ namespace Moein.TimeSystem
         protected int pointer;
         protected int maxTimelineCaptureCount;
         protected TransformComponent transformTimeline = null;
-
-        protected virtual void InitComponents()
-        {
-            transformTimeline = new TransformComponent(transform, maxTimelineCaptureCount);
-        }
-
-        protected abstract void CaptureComponents();
-
-        protected abstract void ApplyComponents();
+        protected AnimatorComponent animatorComponent;
 
         #endregion
+
+        private void Start()
+        {
+            Init();
+        }
+
+        protected abstract void Init();
+
+        public abstract void Progress(float timescale);
+
+        public abstract void Rewind(float timescale);
+
+        protected abstract void CalculateLerping(float timescale);
+
+        public abstract void Capture();
+        protected abstract void Apply();
     }
 }
