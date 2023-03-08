@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Moein.TimeSystem
 {
-    public class AnimatorComponent : TimelineComponent<IAnimator, AnimatorSnapshot>
+    public class AnimatorComponent : TimelineComponent<RewindableAnimator, AnimatorSnapshot>
     {
-        public AnimatorComponent(IAnimator component) : base(component)
+        public AnimatorComponent(RewindableAnimator component) : base(component)
         {
         }
 
-        public AnimatorComponent(IAnimator component, int maxTapeSize) : base(component, maxTapeSize)
+        public AnimatorComponent(RewindableAnimator component, int maxTapeSize) : base(component, maxTapeSize)
         {
         }
 
@@ -39,21 +39,7 @@ namespace Moein.TimeSystem
 
         public override void ApplySnapshot(AnimatorSnapshot snapshot)
         {
-            switch (snapshot.type)
-            {
-                case AnimatorSnapshot.ActionType.Bool:
-                    component.SetBool(snapshot.name, (bool) snapshot.value);
-                    break;
-                case AnimatorSnapshot.ActionType.Float:
-                    component.SetFloat(snapshot.name, (float) snapshot.value);
-                    break;
-                case AnimatorSnapshot.ActionType.Int:
-                    component.SetInteger(snapshot.name, (int) snapshot.value);
-                    break;
-                case AnimatorSnapshot.ActionType.Trigger:
-                    component.SetTrigger((string) snapshot.value);
-                    break;
-            }
+            component.ApplySnapshot(snapshot);
         }
 
         public override AnimatorSnapshot LerpSnapshot(AnimatorSnapshot from, AnimatorSnapshot to, float t)

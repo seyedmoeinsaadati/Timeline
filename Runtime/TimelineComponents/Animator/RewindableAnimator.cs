@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Moein.TimeSystem
 {
-    public class RewindableAnimator : MonoBehaviour, IAnimator
+    public class RewindableAnimator : MonoBehaviour
     {
         public static readonly string SPEED_FACTOR_ID = "timescale_speed_factor";
 
@@ -12,17 +12,17 @@ namespace Moein.TimeSystem
         [SerializeField] private Animator animator;
         public Animator Animator => animator;
 
-        public float Speed
-        {
-            get { return animator.speed; }
-            set { animator.SetFloat(SPEED_FACTOR_ID, value); }
-        }
+        public float Speed => animator.speed;
 
-        public bool ApplyRootMotion { get; set; }
+        public bool ApplyRootMotion => animator.applyRootMotion;
 
-        public void SetTrigger(int id)
+        public void SetApplyRootMotion(bool value)
         {
-            animator.SetTrigger(id);
+            animator.applyRootMotion = value;
+
+            AnimatorSnapshot snapshot =
+                new AnimatorSnapshot(0, "", value, AnimatorSnapshot.ActionType.RootMotion);
+            Capture(snapshot);
         }
 
         public void SetTrigger(string name)
@@ -32,11 +32,6 @@ namespace Moein.TimeSystem
             AnimatorSnapshot snapshot =
                 new AnimatorSnapshot(0, "", name, AnimatorSnapshot.ActionType.Trigger);
             Capture(snapshot);
-        }
-
-        public void SetInteger(int id, int value)
-        {
-            animator.SetInteger(id, value);
         }
 
         public void SetInteger(string name, int value)
@@ -49,11 +44,6 @@ namespace Moein.TimeSystem
             Capture(snapshot);
         }
 
-        public void SetFloat(int id, float value)
-        {
-            animator.SetFloat(id, value);
-        }
-
         public void SetFloat(string name, float value)
         {
             if (animator.GetFloat(name) == value) return;
@@ -62,21 +52,6 @@ namespace Moein.TimeSystem
             AnimatorSnapshot snapshot =
                 new AnimatorSnapshot(0, name, value, AnimatorSnapshot.ActionType.Float);
             Capture(snapshot);
-        }
-
-        public void SetFloat(int id, float value, float dampTime, float deltaTime)
-        {
-            animator.SetFloat(id, value, dampTime, deltaTime);
-        }
-
-        public void SetFloat(string name, float value, float dampTime, float deltaTime)
-        {
-            animator.SetFloat(name, value, dampTime, deltaTime);
-        }
-
-        public void SetBool(int id, bool value)
-        {
-            animator.SetBool(id, value);
         }
 
         public void SetBool(string name, bool value)
@@ -105,7 +80,30 @@ namespace Moein.TimeSystem
 
         private void Capture(AnimatorSnapshot snapshot)
         {
+            if (animator.speed < 0) return;
             onCapture?.Invoke(snapshot);
+        }
+
+        public void ApplySnapshot(AnimatorSnapshot snapshot)
+        {
+            switch (snapshot.type)
+            {
+                case AnimatorSnapshot.ActionType.Bool:
+                    animator.SetBool(snapshot.name, (bool) snapshot.value);
+                    break;
+                case AnimatorSnapshot.ActionType.Float:
+                    animator.SetFloat(snapshot.name, (float) snapshot.value);
+                    break;
+                case AnimatorSnapshot.ActionType.Int:
+                    animator.SetInteger(snapshot.name, (int) snapshot.value);
+                    break;
+                case AnimatorSnapshot.ActionType.Trigger:
+                    animator.SetTrigger((string) snapshot.value);
+                    break;
+                case AnimatorSnapshot.ActionType.RootMotion:
+                    animator.applyRootMotion = (bool) snapshot.value;
+                    break;
+            }
         }
     }
 }

@@ -35,7 +35,8 @@ namespace Moein.TimeSystem
             Bool = 1,
             Float = 2,
             Int = 3,
-            Trigger = 4
+            Trigger = 4,
+            RootMotion = 5
         }
 
         public ActionType type;
