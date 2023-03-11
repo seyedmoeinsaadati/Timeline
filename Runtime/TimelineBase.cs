@@ -32,7 +32,7 @@ namespace Moein.TimeSystem
 
         public abstract void Rewind(float timescale);
 
-        protected abstract void CalculateLerping(float timescale);
+        protected abstract void CalculatingTime();
 
         public abstract void Capture();
         protected abstract void Apply();

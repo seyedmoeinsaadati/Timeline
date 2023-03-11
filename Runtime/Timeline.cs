@@ -30,7 +30,9 @@ namespace Moein.TimeSystem
 
         public override void Progress(float timescale)
         {
-            CalculateLerping(timescale);
+            this.timescale = timescale;
+            timelineTime += Time.fixedDeltaTime * timescale;
+            CalculatingTime();
 
             if (pointer < headIndex)
             {
@@ -49,7 +51,9 @@ namespace Moein.TimeSystem
 
         public override void Rewind(float timescale)
         {
-            CalculateLerping(timescale);
+            this.timescale = timescale;
+            timelineTime += Time.fixedDeltaTime * timescale;
+            CalculatingTime();
             if (pointer == headIndex)
             {
                 transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(transformTimeline.HeadSnapshot,
@@ -60,10 +64,8 @@ namespace Moein.TimeSystem
             Apply();
         }
 
-        protected override void CalculateLerping(float timescale)
+        protected override void CalculatingTime()
         {
-            this.timescale = timescale;
-            timelineTime += Time.fixedDeltaTime * timescale;
             timelineTime = Mathf.Clamp(timelineTime, 0, recordingTime);
             pointer = (int) (timelineTime / captureInterval);
             t = (timelineTime - pointer * captureInterval) / captureInterval;
