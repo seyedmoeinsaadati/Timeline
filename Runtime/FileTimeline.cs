@@ -14,6 +14,7 @@ namespace Moein.TimeSystem
             set => fileName = value;
         }
 
+
         protected override void Init()
         {
             pointer = -1;
@@ -21,23 +22,31 @@ namespace Moein.TimeSystem
             initialized = true;
         }
 
+        public void Jump(float time)
+        {
+            timelineTime = time;
+            CalculatingTime();
+            Apply();
+        }
+
         public override void Progress(float timeScale)
         {
-            CalculateLerping(timeScale);
+            timelineTime += Time.fixedDeltaTime * timeScale;
+            CalculatingTime();
             Apply();
         }
 
         public override void Rewind(float timeScale)
         {
-            CalculateLerping(timeScale);
+            timelineTime += Time.fixedDeltaTime * timeScale;
+            CalculatingTime();
             Apply();
         }
 
-        protected override void CalculateLerping(float timeScale)
+        protected override void CalculatingTime()
         {
-            timelineTime += Time.fixedDeltaTime * timeScale;
             timelineTime = Mathf.Clamp(timelineTime, 0, maxTimelineCaptureCount * captureInterval);
-            pointer = (int) (timelineTime / captureInterval);
+            pointer = (int)(timelineTime / captureInterval);
             t = (timelineTime - pointer * captureInterval) / captureInterval;
         }
 
@@ -67,6 +76,10 @@ namespace Moein.TimeSystem
             transformTimeline.Tape = TimeRecorderFileHandler.Load<TransformSnapshot>(directory, fileName);
             maxTimelineCaptureCount = transformTimeline.CaptureCount;
         }
+
+#if UNITY_EDITOR
+        public float MaxTime => maxTimelineCaptureCount * captureInterval;
+#endif
     }
 
 #if UNITY_EDITOR
@@ -74,16 +87,28 @@ namespace Moein.TimeSystem
     [CustomEditor(typeof(FileTimeline)), CanEditMultipleObjects]
     public class FileTimelineEditor : Editor
     {
+        private FileTimeline timeline;
+        private float sliderTime;
+
+        private void OnEnable()
+        {
+            timeline = target as FileTimeline;
+        }
+
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
             serializedObject.Update();
+            var timelineTime = serializedObject.FindProperty("timelineTime");
+
             if (Application.isPlaying)
             {
                 GUILayout.Space(5);
-                var timelineTime = serializedObject.FindProperty("timelineTime");
                 GUILayout.Label($"Timeline Time: {timelineTime.floatValue}");
+
+                sliderTime = EditorGUILayout.Slider("timeline: ", sliderTime, 0, timeline.MaxTime);
+                timeline.Jump(sliderTime);
             }
 
             // read-only mode
