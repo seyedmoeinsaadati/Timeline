@@ -29,6 +29,13 @@ namespace Moein.TimeSystem
             Apply();
         }
 
+        public void Lerp(float t)
+        {
+            timelineTime = Mathf.Lerp(0, maxTimelineCaptureCount * captureInterval, t);
+            CalculatingTime();
+            Apply();
+        }
+
         public override void Progress(float timeScale)
         {
             timelineTime += Time.fixedDeltaTime * timeScale;
