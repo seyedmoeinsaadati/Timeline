@@ -5,7 +5,8 @@ namespace Moein.TimeSystem
     [System.Serializable]
     public class SerializableVector3
     {
-        private float x, y, z;
+        public float x, y, z;
+
         public SerializableVector3(Vector3 v3)
         {
             x = v3.x;
@@ -22,7 +23,7 @@ namespace Moein.TimeSystem
     [System.Serializable]
     public class SerializableQuaternion
     {
-        private float x, y, z, w;
+        public float x, y, z, w;
 
         public SerializableQuaternion(Quaternion quaternion)
         {
@@ -37,5 +38,4 @@ namespace Moein.TimeSystem
             return new Quaternion(value.x, value.y, value.z, value.w);
         }
     }
-    
 }
