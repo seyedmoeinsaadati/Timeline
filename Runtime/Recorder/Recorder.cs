@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Moein.TimeSystem
 {
@@ -22,7 +23,8 @@ namespace Moein.TimeSystem
         private int takeNumber = 1;
 
         [SerializeField] private float captureInterval = .5f;
-        // [SerializeField] private HandlingType handlingType;
+
+        [SerializeField] private bool saveAsAnimationClip = false;
 
         [Header("Control Recording Key"), Space(5)]
         public KeyCode startRecordKey = KeyCode.R;
@@ -69,7 +71,7 @@ namespace Moein.TimeSystem
             for (int i = 0; i < timelines.Length; i++)
             {
                 timelines[i].FileName = GetFileName(timelines[i].transform);
-                timelines[i].transform.name = $"{timelines[i].FileName} ({timelines[i].transform.name})";
+                // timelines[i].transform.name = $"{timelines[i].FileName}";
             }
         }
 
@@ -98,6 +100,11 @@ namespace Moein.TimeSystem
         {
             state = RecorderState.Stop;
             Save();
+
+            if (saveAsAnimationClip)
+            {
+                SaveAsAnimationClip();
+            }
 
 #if UNITY_EDITOR
             Debug.Log($"Record Finished. Record Time: {RecordingTime}");
@@ -203,6 +210,28 @@ namespace Moein.TimeSystem
             }
         }
 
+        private void SaveAsAnimationClip()
+        {
+            AnimationClip clip = new AnimationClip
+            {
+                legacy = true
+            };
+            for (int i = 0; i < timelines.Length; i++)
+            {
+                var curves = timelines[i].GetAnimationCurve();
+                var relativePath = GetRelativePath(transform, timelines[i].transform);
+                clip.SetCurve(relativePath, typeof(Transform), "localPosition.x", curves[0]);
+                clip.SetCurve(relativePath, typeof(Transform), "localPosition.y", curves[1]);
+                clip.SetCurve(relativePath, typeof(Transform), "localPosition.z", curves[2]);
+                clip.SetCurve(relativePath, typeof(Transform), "localRotation.x", curves[3]);
+                clip.SetCurve(relativePath, typeof(Transform), "localRotation.y", curves[4]);
+                clip.SetCurve(relativePath, typeof(Transform), "localRotation.z", curves[5]);
+                clip.SetCurve(relativePath, typeof(Transform), "localRotation.w", curves[6]);
+            }
+
+            TimeRecorderFileHandler.SaveAnimationClip(DirectoryName, DirectoryName, clip);
+        }
+
         #endregion
 
         private void Update()
@@ -245,6 +274,21 @@ namespace Moein.TimeSystem
             {
                 GUILayout.Label($"Time Scale: {timeScale}");
             }
+        }
+
+        private static string GetRelativePath(Transform root, Transform transform)
+        {
+            List<string> result = new List<string>();
+            Transform t = transform;
+            while (t != root && t != t.root)
+            {
+                result.Add(t.name);
+                t = t.parent;
+            }
+
+            //result.Add(root.name);
+            result.Reverse();
+            return string.Join("/", result);
         }
     }
 }
