@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Moein.TimeSystem
@@ -13,6 +14,7 @@ namespace Moein.TimeSystem
         private static readonly string ASSETS_PATH = "Assets/Resources/";
         private static readonly string MAIN_DIRECTORY = "TimelineFiles/";
         private static readonly string RECORD_FILE_EXTENSION = ".bytes";
+        private static readonly string ANIMCLIP_FILE_EXTENSION = ".anim";
 
         /// <summary>
         /// save list<T> as a text file in resources folder
@@ -36,6 +38,28 @@ namespace Moein.TimeSystem
             {
 #if UNITY_EDITOR
                 if (instance.debug) Debug.LogError($"File Saved Failed. {path}");
+#endif
+            }
+        }
+
+        public static void SaveAnimationClip(string subDirectory, string filename, AnimationClip clip)
+        {
+            string directory = ASSETS_PATH + MAIN_DIRECTORY + subDirectory + "/";
+            if (Directory.Exists(directory) == false) Directory.CreateDirectory(directory);
+            string path = directory + filename + ANIMCLIP_FILE_EXTENSION;
+            try
+            {
+                AssetDatabase.CreateAsset(clip, path);
+                AssetDatabase.SaveAssets();
+
+#if UNITY_EDITOR
+                if (instance.debug) Debug.Log($"AnimationClip Saved Successfully. {path}");
+#endif
+            }
+            catch (Exception)
+            {
+#if UNITY_EDITOR
+                if (instance.debug) Debug.LogError($"AnimationClip Saved Failed. {path}");
 #endif
             }
         }
