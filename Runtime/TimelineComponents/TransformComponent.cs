@@ -66,6 +66,7 @@ namespace Moein.TimeSystem
             curves[3] = new AnimationCurve();
             curves[4] = new AnimationCurve();
             curves[5] = new AnimationCurve();
+            curves[6] = new AnimationCurve();
 
             if (self.CaptureCount == 0) return curves;
 
