@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Moein.TimeSystem
@@ -53,7 +52,7 @@ namespace Moein.TimeSystem
         protected override void CalculatingTime()
         {
             timelineTime = Mathf.Clamp(timelineTime, 0, maxTimelineCaptureCount * captureInterval);
-            pointer = (int)(timelineTime / captureInterval);
+            pointer = (int) (timelineTime / captureInterval);
             t = (timelineTime - pointer * captureInterval) / captureInterval;
         }
 
@@ -82,6 +81,11 @@ namespace Moein.TimeSystem
 
             transformTimeline.Tape = TimeRecorderFileHandler.Load<TransformSnapshot>(directory, fileName);
             maxTimelineCaptureCount = transformTimeline.CaptureCount;
+        }
+
+        public AnimationCurve[] GetAnimationCurve()
+        {
+            return TransformComponent.ToAnimationCurve(transformTimeline, captureInterval);
         }
 
 #if UNITY_EDITOR
