@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+
 namespace Moein.TimeSystem
 {
     public class Recorder : MonoBehaviour
@@ -206,7 +208,7 @@ namespace Moein.TimeSystem
         {
             for (int i = 0; i < timelines.Length; i++)
             {
-                timelines[i].LoadComponents(DirectoryName, captureInterval);
+                timelines[i].LoadComponents(DirectoryName, captureInterval, false);
             }
         }
 
@@ -285,10 +287,10 @@ namespace Moein.TimeSystem
                 result.Add(t.name);
                 t = t.parent;
             }
-
-            //result.Add(root.name);
             result.Reverse();
             return string.Join("/", result);
         }
     }
 }
+
+#endif

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.XR.WSA.Input;
 
 namespace Moein.TimeSystem
 {
