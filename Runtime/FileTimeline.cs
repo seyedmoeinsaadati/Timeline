@@ -1,5 +1,8 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Moein.TimeSystem
 {
@@ -13,6 +16,7 @@ namespace Moein.TimeSystem
             set => fileName = value;
         }
 
+        public Vector3 DefaultPosition => transform.parent.TransformPoint(transformTimeline.Tape[0].position);
 
         protected override void Init()
         {
@@ -52,7 +56,7 @@ namespace Moein.TimeSystem
         protected override void CalculatingTime()
         {
             timelineTime = Mathf.Clamp(timelineTime, 0, maxTimelineCaptureCount * captureInterval);
-            pointer = (int) (timelineTime / captureInterval);
+            pointer = (int)(timelineTime / captureInterval);
             t = (timelineTime - pointer * captureInterval) / captureInterval;
         }
 
@@ -74,13 +78,19 @@ namespace Moein.TimeSystem
             TimeRecorderFileHandler.Save(directory, fileName, transformTimeline.Tape);
         }
 
-        public void LoadComponents(string directory, float interval)
+        public void LoadComponents(string directory, float interval, bool loadOnHead)
         {
             captureInterval = interval;
             pointer = -1;
 
             transformTimeline.Tape = TimeRecorderFileHandler.Load<TransformSnapshot>(directory, fileName);
             maxTimelineCaptureCount = transformTimeline.CaptureCount;
+
+            if (loadOnHead)
+            {
+                pointer = maxTimelineCaptureCount - 2;
+                Apply();
+            }
         }
 
         public AnimationCurve[] GetAnimationCurve()
@@ -90,6 +100,15 @@ namespace Moein.TimeSystem
 
 #if UNITY_EDITOR
         public float MaxTime => maxTimelineCaptureCount * captureInterval;
+
+        //private void OnDrawGizmos()
+        //{
+        //    if (EditorApplication.isPlaying)
+        //    {
+        //        Gizmos.color = Color.red;
+        //        Gizmos.DrawSphere(DefaultPosition, .5f);
+        //    }
+        //}
 #endif
     }
 
@@ -118,8 +137,14 @@ namespace Moein.TimeSystem
                 GUILayout.Space(5);
                 GUILayout.Label($"Timeline Time: {timelineTime.floatValue}");
 
+                EditorGUI.BeginChangeCheck();
                 sliderTime = EditorGUILayout.Slider("timeline: ", sliderTime, 0, timeline.MaxTime);
-                timeline.Jump(sliderTime);
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    timeline.Jump(sliderTime);
+                }
+
             }
 
             // read-only mode
