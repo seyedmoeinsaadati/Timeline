@@ -2,14 +2,17 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Moein.TimeSystem
 {
     public class TimeRecorderFileHandler : MonoBehaviour
     {
-        [SerializeField] public bool debug = true;
+        [SerializeField] public bool debug = false;
         private static TimeRecorderFileHandler instance;
         private static readonly string ASSETS_PATH = "Assets/Resources/";
         private static readonly string MAIN_DIRECTORY = "TimelineFiles/";
@@ -42,6 +45,7 @@ namespace Moein.TimeSystem
             }
         }
 
+#if UNITY_EDITOR
         public static void SaveAnimationClip(string subDirectory, string filename, AnimationClip clip)
         {
             string directory = ASSETS_PATH + MAIN_DIRECTORY + subDirectory + "/";
@@ -52,17 +56,16 @@ namespace Moein.TimeSystem
                 AssetDatabase.CreateAsset(clip, path);
                 AssetDatabase.SaveAssets();
 
-#if UNITY_EDITOR
                 if (instance.debug) Debug.Log($"AnimationClip Saved Successfully. {path}");
-#endif
+
             }
             catch (Exception)
             {
-#if UNITY_EDITOR
+
                 if (instance.debug) Debug.LogError($"AnimationClip Saved Failed. {path}");
-#endif
             }
         }
+#endif
 
         /// <summary>
         /// load a text file in resources folder as list<T> 
@@ -72,7 +75,7 @@ namespace Moein.TimeSystem
             string path = MAIN_DIRECTORY + subDirectory + "/" + fileName; // + RECORD_FILE_EXTENSION;
             try
             {
-                TextAsset binaryFile = (TextAsset) Resources.Load(path);
+                TextAsset binaryFile = (TextAsset)Resources.Load(path);
                 Stream s = new MemoryStream(binaryFile.bytes);
                 BinaryFormatter formatter = new BinaryFormatter();
 
@@ -82,7 +85,7 @@ namespace Moein.TimeSystem
                 if (instance.debug) Debug.Log($"File Loaded Successfully. {path}");
 #endif
 
-                return (List<T>) result;
+                return (List<T>)result;
             }
             catch (Exception e)
             {
