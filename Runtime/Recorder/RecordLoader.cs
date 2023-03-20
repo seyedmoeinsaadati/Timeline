@@ -6,6 +6,7 @@ using UnityEditor;
 
 namespace Moein.TimeSystem
 {
+
     public class RecordLoader : MonoBehaviour
     {
         [SerializeField] private string takeName = "TakeName";
@@ -24,7 +25,7 @@ namespace Moein.TimeSystem
         private void Start()
         {
             FindObjects();
-            if (autoLoad) Load();
+            if (autoLoad) Load(loadOnHead);
         }
 
         private void FindObjects()
@@ -45,7 +46,7 @@ namespace Moein.TimeSystem
             }
         }
 
-        public void Load()
+        public void Load(bool loadOnHead)
         {
             for (int i = 0; i < timelines.Length; i++)
             {

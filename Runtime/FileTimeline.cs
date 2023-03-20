@@ -132,7 +132,7 @@ namespace Moein.TimeSystem
             serializedObject.Update();
             var timelineTime = serializedObject.FindProperty("timelineTime");
 
-            if (Application.isPlaying)
+            if (EditorApplication.isPlaying)
             {
                 GUILayout.Space(5);
                 GUILayout.Label($"Timeline Time: {timelineTime.floatValue}");
@@ -148,7 +148,7 @@ namespace Moein.TimeSystem
             }
 
             // read-only mode
-            // if (Application.isPlaying == false)
+            // if (EditorApplication.isPlaying == false)
             // {
             //     DrawDefaultInspector();
             // }
