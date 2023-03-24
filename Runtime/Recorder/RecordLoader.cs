@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,18 +11,26 @@ namespace Moein.TimeSystem
 
     public class RecordLoader : MonoBehaviour
     {
-        [SerializeField] private string takeName = "TakeName";
-        [SerializeField] private int takeNumber = 1;
+        [Serializable]
+        public class TakeInfo
+        {
+            public string takeName;
+            public string takeNumber;
+            public bool reverse;
+        }
 
         [SerializeField] private float captureInterval = .5f;
 
         [SerializeField] private bool autoLoad;
         [SerializeField] private bool loadOnHead;
         [SerializeField] private bool renameTimelines;
+        [SerializeField] private List<TakeInfo> takes = new List<TakeInfo>(0);
 
         private FileTimeline[] timelines = null;
 
-        public string DirectoryName => $"{takeName}_{takeNumber}";
+        public TakeInfo MainTake => takes[0];
+
+        public string DirectoryName => $"{MainTake.takeName}_{MainTake.takeNumber}";
 
         private void Start()
         {
@@ -48,9 +58,13 @@ namespace Moein.TimeSystem
 
         public void Load(bool loadOnHead)
         {
-            for (int i = 0; i < timelines.Length; i++)
+            for (int j = 0; j < takes.Count; j++)
             {
-                timelines[i].LoadComponents(DirectoryName, captureInterval, loadOnHead);
+                string directroy = $"{takes[j].takeName}_{takes[j].takeNumber}";
+                for (int i = 0; i < timelines.Length; i++)
+                {
+                    timelines[i].AddTape(directroy, takes[j].reverse);
+                }
             }
         }
 
