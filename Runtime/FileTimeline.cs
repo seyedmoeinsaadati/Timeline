@@ -93,6 +93,15 @@ namespace Moein.TimeSystem
             }
         }
 
+        public void AddTape(string directory, bool reverseLoad = false)
+        {
+            var newTape = TimeRecorderFileHandler.Load<TransformSnapshot>(directory, fileName);
+            if (reverseLoad) newTape.Reverse();
+
+            transformTimeline.Tape.AddRange(newTape);
+            maxTimelineCaptureCount = transformTimeline.CaptureCount;
+        }
+
         public AnimationCurve[] GetAnimationCurve()
         {
             return TransformComponent.ToAnimationCurve(transformTimeline, captureInterval);
