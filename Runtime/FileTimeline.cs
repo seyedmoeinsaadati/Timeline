@@ -78,12 +78,16 @@ namespace Moein.TimeSystem
             TimeRecorderFileHandler.Save(directory, fileName, transformTimeline.Tape);
         }
 
-        public void LoadComponents(string directory, float interval, bool loadOnHead)
+        public void LoadComponents(float interval, bool loadOnHead, params TakeInfo[] takes)
         {
             captureInterval = interval;
             pointer = -1;
 
-            transformTimeline.Tape = TimeRecorderFileHandler.Load<TransformSnapshot>(directory, fileName);
+            for (int j = 0; j < takes.Length; j++)
+            {
+                AddTape(takes[j].Directory, takes[j].reverse);
+            }
+
             maxTimelineCaptureCount = transformTimeline.CaptureCount;
 
             if (loadOnHead)
