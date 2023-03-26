@@ -68,9 +68,9 @@ namespace Moein.TimeSystem
         protected override void Apply()
         {
             if (pointer < maxTimelineCaptureCount - 1)
-            {
                 transformTimeline.ApplySnapshot(transformTimeline.LerpSnapshot(pointer, pointer + 1, t));
-            }
+            else
+                transformTimeline.ApplySnapshot(transformTimeline.HeadSnapshot);
         }
 
         public void SaveComponents(string directory)
@@ -90,11 +90,8 @@ namespace Moein.TimeSystem
 
             maxTimelineCaptureCount = transformTimeline.CaptureCount;
 
-            if (loadOnHead)
-            {
-                pointer = maxTimelineCaptureCount - 2;
-                Apply();
-            }
+            if (loadOnHead) 
+                Jump(maxTimelineCaptureCount * interval);
         }
 
         public void AddTape(string directory, bool reverseLoad = false)
@@ -103,7 +100,6 @@ namespace Moein.TimeSystem
             if (reverseLoad) newTape.Reverse();
 
             transformTimeline.Tape.AddRange(newTape);
-            maxTimelineCaptureCount = transformTimeline.CaptureCount;
         }
 
         public AnimationCurve[] GetAnimationCurve()
@@ -157,7 +153,6 @@ namespace Moein.TimeSystem
                 {
                     timeline.Jump(sliderTime);
                 }
-
             }
 
             // read-only mode

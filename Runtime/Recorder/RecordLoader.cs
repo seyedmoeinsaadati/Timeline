@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System;
 
 #if UNITY_EDITOR
@@ -20,11 +19,9 @@ namespace Moein.TimeSystem
 
     public class RecordLoader : MonoBehaviour
     {
-      
-
         [SerializeField] private float captureInterval = .5f;
-        [SerializeField] private bool loadOnHead;
         [SerializeField] private bool autoLoad;
+        [SerializeField] private bool loadOnHead;
         [SerializeField] private bool renameTimelines;
         [SerializeField] private TakeInfo[] takes = new TakeInfo[1];
 
@@ -64,7 +61,6 @@ namespace Moein.TimeSystem
             {
                 timelines[i].LoadComponents(captureInterval, loadOnHead, takes);
             }
-
         }
 
         private string GetFileName(Transform t)
