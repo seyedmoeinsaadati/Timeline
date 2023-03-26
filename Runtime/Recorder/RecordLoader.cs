@@ -8,23 +8,25 @@ using UnityEditor;
 
 namespace Moein.TimeSystem
 {
+    [Serializable]
+    public class TakeInfo
+    {
+        public string takeName;
+        public string takeNumber;
+        public bool reverse;
+
+        public string Directory => $"{takeName}_{takeNumber}";
+    }
 
     public class RecordLoader : MonoBehaviour
     {
-        [Serializable]
-        public class TakeInfo
-        {
-            public string takeName;
-            public string takeNumber;
-            public bool reverse;
-        }
+      
 
         [SerializeField] private float captureInterval = .5f;
-
-        [SerializeField] private bool autoLoad;
         [SerializeField] private bool loadOnHead;
+        [SerializeField] private bool autoLoad;
         [SerializeField] private bool renameTimelines;
-        [SerializeField] private List<TakeInfo> takes = new List<TakeInfo>(0);
+        [SerializeField] private TakeInfo[] takes = new TakeInfo[1];
 
         private FileTimeline[] timelines = null;
 
@@ -58,14 +60,11 @@ namespace Moein.TimeSystem
 
         public void Load(bool loadOnHead)
         {
-            for (int j = 0; j < takes.Count; j++)
+            for (int i = 0; i < timelines.Length; i++)
             {
-                string directroy = $"{takes[j].takeName}_{takes[j].takeNumber}";
-                for (int i = 0; i < timelines.Length; i++)
-                {
-                    timelines[i].AddTape(directroy, takes[j].reverse);
-                }
+                timelines[i].LoadComponents(captureInterval, loadOnHead, takes);
             }
+
         }
 
         private string GetFileName(Transform t)

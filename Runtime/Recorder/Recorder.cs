@@ -18,7 +18,8 @@ namespace Moein.TimeSystem
 
         #region Record Fields
 
-        [Header("Record Fields")] [SerializeField]
+        [Header("Record Fields")]
+        [SerializeField]
         private string takeName = "TakeName";
 
         [SerializeField, Min(1), Tooltip("Increase value after record")]
@@ -37,7 +38,8 @@ namespace Moein.TimeSystem
 
         #region Player Fields
 
-        [Header("Player Fields")] [SerializeField]
+        [Header("Player Fields")]
+        [SerializeField]
         private bool loadOnStart;
 
         [SerializeField] private KeyCode forwardPlayKey = KeyCode.W;
@@ -206,9 +208,16 @@ namespace Moein.TimeSystem
 
         private void Load()
         {
+            TakeInfo takeInfo = new TakeInfo
+            {
+                reverse = false,
+                takeName = takeName,
+                takeNumber = takeNumber.ToString()
+            };
+
             for (int i = 0; i < timelines.Length; i++)
             {
-                timelines[i].LoadComponents(DirectoryName, captureInterval, false);
+                timelines[i].LoadComponents(captureInterval, false, takeInfo);
             }
         }
 
