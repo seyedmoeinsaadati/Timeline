@@ -1,7 +1,9 @@
 {
     "name": "com.moein.timeline.unity",
+    "rootNamespace": "",
     "references": [
-        "GUID:6e8f3d9e7a193334b99ec01e814cbd95"
+        "GUID:6e8f3d9e7a193334b99ec01e814cbd95",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

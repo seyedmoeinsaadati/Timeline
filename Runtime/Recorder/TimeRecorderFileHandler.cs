@@ -12,7 +12,11 @@ namespace Moein.TimeSystem
 {
     public class TimeRecorderFileHandler : MonoBehaviour
     {
-        [SerializeField] public bool debug = true;
+        public bool debug = false;
+
+        ///////////////////////////////////////
+        /// STATIC METHODS
+        ///////////////////////////////////////
         private static TimeRecorderFileHandler instance;
         private static readonly string ASSETS_PATH = "Assets/Resources/";
         private static readonly string MAIN_DIRECTORY = "TimelineFiles/";

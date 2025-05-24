@@ -8,7 +8,7 @@ namespace Moein.TimeSystem
 {
     public class FileTimeline : TimelineBase
     {
-        [SerializeField] private string fileName;
+        private string fileName;
 
         public string FileName
         {
@@ -90,7 +90,7 @@ namespace Moein.TimeSystem
 
             maxTimelineCaptureCount = transformTimeline.CaptureCount;
 
-            if (loadOnHead) 
+            if (loadOnHead)
                 Jump(maxTimelineCaptureCount * interval);
         }
 

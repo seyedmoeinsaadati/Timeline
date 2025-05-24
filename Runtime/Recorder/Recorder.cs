@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
+
 #if UNITY_EDITOR
 
 namespace Moein.TimeSystem
@@ -14,10 +18,9 @@ namespace Moein.TimeSystem
             Playing
         }
 
-        [HideInInspector] public RecorderState state;
-
         #region Record Fields
 
+        [SerializeField] private bool recordOnStart = false;
         [Header("Record Fields")]
         [SerializeField]
         private string takeName = "TakeName";
@@ -29,10 +32,11 @@ namespace Moein.TimeSystem
 
         [SerializeField] private bool saveAsAnimationClip = false;
 
+#if !ENABLE_INPUT_SYSTEM
         [Header("Control Recording Key"), Space(5)]
         public KeyCode startRecordKey = KeyCode.R;
-
         public KeyCode stopKey = KeyCode.E;
+#endif
 
         #endregion
 
@@ -42,13 +46,16 @@ namespace Moein.TimeSystem
         [SerializeField]
         private bool loadOnStart;
 
+#if !ENABLE_INPUT_SYSTEM
         [SerializeField] private KeyCode forwardPlayKey = KeyCode.W;
-
         [SerializeField] private KeyCode backwardPlayKey = KeyCode.Q;
+#endif
+
         public float timeScale = 1;
 
         #endregion
 
+        private RecorderState state;
         private FileTimeline[] timelines = null;
         private float startRecordTime;
         private int captureCount;
@@ -65,7 +72,8 @@ namespace Moein.TimeSystem
             FindObjects();
             SetRecordConfig();
 
-            if (loadOnStart) Load();
+            if (recordOnStart) StartRecording();
+            else if (loadOnStart) Load();
         }
 
         private void FindObjects()
@@ -247,6 +255,34 @@ namespace Moein.TimeSystem
 
         private void Update()
         {
+            HandleInput();
+        }
+
+        private void HandleInput()
+        {
+#if ENABLE_INPUT_SYSTEM
+            if (Keyboard.current.rKey.wasPressedThisFrame)
+                StartRecording();
+            else if (Keyboard.current.tKey.wasPressedThisFrame)
+            {
+                if (state == RecorderState.Recording)
+                {
+                    StopRecording();
+                }
+                else if (state == RecorderState.Playing)
+                {
+                    StopPlaying();
+                }
+            }
+            else if (Keyboard.current.eKey.wasPressedThisFrame)
+            {
+                ForwardPlaying();
+            }
+            else if (Keyboard.current.qKey.wasPressedThisFrame)
+            {
+                BackwardPlaying();
+            }
+#else
             if (Input.GetKeyDown(startRecordKey))
                 StartRecording();
             else if (Input.GetKeyDown(stopKey))
@@ -268,6 +304,7 @@ namespace Moein.TimeSystem
             {
                 BackwardPlaying();
             }
+#endif
         }
 
         private void OnGUI()

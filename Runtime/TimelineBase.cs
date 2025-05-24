@@ -6,8 +6,8 @@ namespace Moein.TimeSystem
     [DefaultExecutionOrder(-100)]
     public abstract class TimelineBase : MonoBehaviour
     {
-        [SerializeField] protected bool initialized;
         [HideInInspector, SerializeField] protected float timelineTime; // between 0, maxRecordingTime
+        protected bool initialized;
 
         #region TimelineComponents
 

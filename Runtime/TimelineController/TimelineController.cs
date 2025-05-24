@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace Moein.TimeSystem
+﻿namespace Moein.TimeSystem
 {
     public class TimelineController : TimelineControllerBase
     {
@@ -11,7 +8,7 @@ namespace Moein.TimeSystem
         {
             if (findTimelinesAtStart)
             {
-                timelines.AddRange(FindObjectsOfType<TimelineBase>());
+                timelines.AddRange(transform.GetComponentsInChildren<TimelineBase>());
             }
         }
 

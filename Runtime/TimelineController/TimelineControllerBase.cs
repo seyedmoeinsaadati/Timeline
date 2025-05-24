@@ -8,7 +8,7 @@ namespace Moein.TimeSystem
         [SerializeField] protected float timeScale = 1;
         [SerializeField] protected List<TimelineBase> timelines = new List<TimelineBase>();
 
-        public float TimeScale
+        public virtual float TimeScale
         {
             get => timeScale;
             set => timeScale = value;
@@ -46,6 +46,7 @@ namespace Moein.TimeSystem
             }
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (timeScale > 0)
@@ -61,5 +62,6 @@ namespace Moein.TimeSystem
                 Gizmos.DrawIcon(transform.position, "backward_icon.png", true);
             }
         }
+#endif
     }
 }
